@@ -12,6 +12,7 @@ export default defineConfig(({ mode }) => {
   return {
     root: rootDir,
     base: '/',
+    publicDir: path.resolve(rootDir, '..', 'public'),
     appType: 'spa',
     plugins: [
       vue(),
@@ -28,6 +29,9 @@ export default defineConfig(({ mode }) => {
       alias: {
         '@': rootDir,
       }
+    },
+    server: {
+      port: 5173,
     },
     build: {
       minify: production,

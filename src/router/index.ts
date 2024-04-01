@@ -45,11 +45,11 @@ const router = createRouter({
           } as RouteMeta & IRouteMeta
         },
         {
-          path: 'user',
-          name: 'user_index',
-          component: () => import('@/views/dashboard/examples/user/Index.vue'),
+          path: 'query',
+          name: 'query_index',
+          component: () => import('@/views/dashboard/examples/query/Index.vue'),
           meta: {
-            title: 'User',
+            title: 'Query',
           } as RouteMeta & IRouteMeta
         },
         {

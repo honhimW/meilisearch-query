@@ -1,15 +1,9 @@
 <p align="center">
  <img align="center" src="https://raw.githubusercontent.com/radix-vue/shadcn-vue/dev/apps/www/src/public/android-chrome-192x192.png" height="96" />
  <h1 align="center">
-  Vue Shadcn Admin
+  Query
  </h1>
 </p>
-
-![hero](src/assets/images/screenshot-dark.png)
-![hero](src/assets/images/screenshot-light.png)
-
-## Preview
-[https://vue-shadcn-dashboard.vercel.app/](https://vue-shadcn-dashboard.vercel.app/)
 
 ## Documentation
 

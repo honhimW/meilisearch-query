@@ -11,7 +11,7 @@ import router from './router'
 
 const app = createApp(App)
 
-app.component(VueFeather.name, VueFeather);
+app.component(VueFeather.name as string, VueFeather);
 app.component('PageHeader', PageHeaderVue);
 app.component('Icon', Icon);
 app.use(createPinia())

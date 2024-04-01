@@ -13,6 +13,17 @@ export const APP_MENU: Record<string, { name: string, routes: IDashboardMenus[] 
     name: 'Core',
     routes: [
       {
+        path: 'query',
+        title: 'Query',
+        icon: 'Search',
+        description: 'Query'
+      },
+    ],
+  },
+  settings: {
+    name: 'General',
+    routes: [
+      {
         title: 'Dashboard',
         icon: 'LayoutDashboard',
         path: 'home',
@@ -22,17 +33,6 @@ export const APP_MENU: Record<string, { name: string, routes: IDashboardMenus[] 
         icon: 'ClipboardCheck',
         path: 'task',
         description: 'Manage Tasks'
-      },
-    ],
-  },
-  settings: {
-    name: 'General',
-    routes: [
-      {
-        path: 'user',
-        title: 'User',
-        icon: 'Users',
-        description: 'Manage User'
       },
       {
         path: 'settings',
