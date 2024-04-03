@@ -8,6 +8,7 @@ import Icon from '@/components/ui/Icon.vue';
 
 import App from './App.vue'
 import router from './router'
+import { MeiliSearch } from 'meilisearch'
 
 const app = createApp(App)
 
@@ -16,5 +17,11 @@ app.component('PageHeader', PageHeaderVue);
 app.component('Icon', Icon);
 app.use(createPinia())
 app.use(router)
+
+const msClient = new MeiliSearch({
+  host: 'http://10.37.1.132:7700',
+  apiKey: 'MASTER_KEY',
+})
+app.provide('msClient', msClient)
 
 app.mount('#app')

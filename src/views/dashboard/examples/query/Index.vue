@@ -1,21 +1,141 @@
 <script lang="ts">
-import QueryPopover from './MultiSearchPopover.vue';
-import { DataTable, type ColumnDef } from '@/components/ui/data-table';
+import QueryPopover from './MultiSearchPopover.vue'
+import { DataTable, type ColumnDef } from '@/components/ui/data-table'
 
-import { defineComponent } from 'vue'
-import ResultTable from '@/views/dashboard/examples/query/ResultTable.vue'
+import { defineComponent, inject } from 'vue'
+
+import data from '@/assets/tasks.json'
+import { ref, h } from 'vue'
+import { Checkbox } from '@/components/ui/checkbox'
+import DataTableHeader from '@/components/ui/data-table/DataTableHeader.vue'
+import type { Column } from '@tanstack/vue-table'
+import { Badge } from '@/components/ui/badge'
+import { Meilisearch, type MultiSearchResult } from 'meilisearch'
+import { type MultiSearchQuery } from 'meilisearch/src/types/types'
 
 export default defineComponent({
-  components: { ResultTable, DataTable, QueryPopover }
+  name: 'Search Bar',
+  components: { DataTable, QueryPopover },
+  props: {
+  },
+  inject: ['msClient'],
+  mounted() {
+    this.search()
+  },
+  data(vm) {
+    let columns: ColumnDef<IData>[] = []
+    let results: Array<MultiSearchResult<Record<string, any>>> = []
+    return {
+      columns,
+      results,
+      q: 'http',
+      indexes: ['logback_133']
+    }
+  },
+  methods: {
+    search() {
+      let queries: MultiSearchQuery[] = this.indexes.map(value => ({
+        indexUid: value,
+        q: this.q,
+      }));
+      (this.msClient as Meilisearch)?.multiSearch({
+        queries
+      }).then(value => {
+        let results = value.results
+        results.map(value1 => ({
+          id: ''
+        }))
+        this.results = results
+      })
+    }
+  }
 })
 
+const renderColumn = (results: Array<MultiSearchResult<Record<string, any>>>) => {
+  let columns: ColumnDef<IData>[] = []
+  results.forEach(value => {
+    value.
+  })
+  return columns
+}
+
+interface IData {
+  id: string
+  document: string
+  status: string
+  label: string
+  priority: string
+}
+
+const tagVariants: Record<string, string> = {
+  bug: 'danger',
+  documentation: 'success',
+  feature: 'warning'
+}
+
+const columns: ColumnDef<IData>[] = [
+  {
+    accessorKey: 'id',
+    header: ({ table }) => h(Checkbox, {
+      checked: table.getIsAllPageRowsSelected(),
+      'onUpdate:checked': val => table.toggleAllPageRowsSelected(!!val),
+      ariaLabel: 'Select All',
+      class: 'translate-y-0.5'
+    }),
+    cell: ({ row }) => h(Checkbox, {
+      checked: row.getIsSelected(),
+      'onUpdate:checked': val => row.toggleSelected(!!val),
+      'ariaLabel': 'Select row',
+      class: 'translate-y-0.5',
+      enableSorting: false,
+      enableHiding: false
+    })
+  },
+  {
+    accessorKey: 'id',
+    header: 'ID',
+    enableSorting: false
+  },
+  {
+    accessorKey: 'document',
+    header: ({ column }) => h(DataTableHeader, {
+      column: column as Column<IData>,
+      title: 'Title',
+      'onUpdate:sort': (val) => {
+        console.log(val)
+      }
+    }),
+    cell: ({ row }) => h('div', {
+      class: 'max-w-[500px] truncate flex items-center'
+    }, [
+      h(Badge, {
+        variant: (tagVariants[row.original.label] as any),
+        class: 'mr-2'
+      }, () => row.original.label),
+      h('span', { class: 'max-w-[500px] truncate font-medium' }, row.original.title)
+    ])
+  },
+  {
+    accessorKey: 'status',
+    header: 'Status',
+    enableSorting: false
+  },
+  {
+    accessorKey: 'priority',
+    header: 'Priority',
+    enableSorting: false
+  },
+  {
+    id: 'actions'
+  }
+]
 
 </script>
 <template>
   <div>
     <page-header title="Search"></page-header>
     <QueryPopover />
-    <ResultTable />
+    <DataTable :columns="columns" :data="results"></DataTable>
   </div>
 
 </template>

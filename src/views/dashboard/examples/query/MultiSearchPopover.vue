@@ -2,10 +2,13 @@
 import { Popover, PopoverTrigger, PopoverContent } from '@/components/ui/popover';
 import { Separator } from '@/components/ui/separator';
 import { Input } from '@/components/ui/input';
-import { computed, ref, onMounted, onUnmounted } from 'vue';
+import { computed, ref, onMounted, onUnmounted, inject } from 'vue'
 import { useRoute } from 'vue-router';
 import router from '@/router';
 import { APP_MENU } from '@/config/app';
+
+
+let msClient = inject('msClient')
 
 const search = ref<string>('');
 const isFocused = ref<boolean>(false);
