@@ -1,19 +1,20 @@
 <script setup lang="ts">
-import { Toggle } from '@/components/ui/toggle';
+import { Toggle } from '@/components/ui/toggle'
 import {
   Tooltip,
   TooltipContent,
   TooltipProvider,
   TooltipTrigger
-} from '@/components/ui/tooltip';
-import { Button } from '@/components/ui/button';
-import { ScrollArea } from '@/components/ui/scroll-area';
-import router from '@/router';
-import { computed } from 'vue';
-import { useRoute } from 'vue-router';
-import { APP_MENU } from '@/config/app';
-import { ArrowLeftToLine } from 'lucide-vue-next';
-import { useAppStore } from '@/stores/app';
+} from '@/components/ui/tooltip'
+import { Button } from '@/components/ui/button'
+import { ScrollArea } from '@/components/ui/scroll-area'
+import router from '@/router'
+import { computed, watch } from 'vue'
+import { useRoute } from 'vue-router'
+import { APP_MENU } from '@/config/app'
+import { ArrowLeftToLine } from 'lucide-vue-next'
+import { useAppStore } from '@/stores/app'
+import { useMagicKeys } from '@vueuse/core'
 
 const route = useRoute()
 
@@ -22,49 +23,90 @@ const menus = computed(() => Object.entries(APP_MENU).map(([key, value]) => ({
     name: value.name,
     routes: value.routes.map((r) => ({
       ...r,
-      active: `/dashboard/${r.path}` === route.path,
-    })),
+      active: `/dashboard/${r.path}` === route.path
+    }))
   })
-));
+))
 
 const handleNavigate = (path: string) => {
-  router.push(path);
+  router.push(path)
   if (window.innerWidth < 1025) {
-    store.toggleSidebar();
+    store.toggleSidebar()
   }
-};
+}
 
-const store = useAppStore();
+const store = useAppStore()
+
+const keys = useMagicKeys({
+  passive: false,
+  onEventFired(e) {
+    // e.preventDefault()
+    if (e.ctrlKey && e.key === 'k') {
+      e.preventDefault()
+    }
+    return false
+  }
+})
+
+const altA = keys['alt+a']
+const ctrlK = keys['ctrl+k']
+
+watch(altA, (value, oldValue, onCleanup) => {
+  if (value) {
+    toggleSidebar();
+  }
+})
+
+watch(ctrlK, (value, oldValue, onCleanup) => {
+  if (value) {
+    console.log(value)
+    // nav to search
+  }
+})
 
 const toggleSidebar = () => {
-  store.toggleSidebar();
-};
+  store.toggleSidebar()
+}
 </script>
 
 <template>
-  <div class="sidebar transition-all duration-400 h-screen overflow-hidden bg-background border-r-[1px] fixed" :style="{ width:`${store.wrapperWidth}px`}">
+  <div class="sidebar transition-all duration-400 h-screen overflow-hidden bg-background border-r-[1px] fixed"
+       :style="{ width:`${store.wrapperWidth}px`}">
     <div class="relative h-full flex flex-col justify-between">
       <div>
         <div class="h-[64px]">
-          <div class="px-4 h-[64px] flex fixed z-10 items-center justify-between border-b-[1px]" :style="{ width: `${store.sidebarExpanded ? 280 : 64}px` }">
+          <div class="px-4 h-[64px] flex fixed z-10 items-center justify-between border-b-[1px]"
+               :style="{ width: `${store.sidebarExpanded ? 280 : 64}px` }">
             <transition name="fade">
               <h2 v-show="store.sidebarExpanded" class="text-2xl font-semibold flex items-center">
                 <span class="text-foreground"><span class="mr-2 flex items-center"><Icon name="Boxes" /></span></span>
                 MSQ
               </h2>
             </transition>
-            <Button
-              variant="outline"
-              class="p-[6px] w-8 h-8 transition-all duration-200"
-              :class="store.sidebarExpanded ? 'bg-transparent' : 'dark:bg-white'"
-              @click="toggleSidebar"
-            >
-              <ArrowLeftToLine class="transition-all duration-500" :class="!store.sidebarExpanded && 'rotate-180 text-black'" />
-            </Button>
+            <TooltipProvider :disable-hoverable-content="true">
+              <Tooltip :delay-duration="0">
+                <TooltipTrigger>
+                  <Button
+                    variant="outline"
+                    class="p-[6px] w-8 h-8 transition-all duration-200"
+                    :class="store.sidebarExpanded ? 'bg-transparent' : 'dark:bg-white'"
+                    @click="toggleSidebar"
+
+                  >
+                    <ArrowLeftToLine class="transition-all duration-500"
+                                     :class="!store.sidebarExpanded && 'rotate-180 text-black'" />
+                  </Button>
+                  <TooltipContent side="right">
+                    <p class="text-sm">alt+a</p>
+                  </TooltipContent>
+                </TooltipTrigger>
+              </Tooltip>
+            </TooltipProvider>
           </div>
         </div>
         <ScrollArea style="height: calc(100vh - 64px)">
-          <div v-for="menu in menus" :key="menu.key" class="border-b-[1px] transition-all" :class="store.sidebarExpanded ? 'p-4' : 'p-2'">
+          <div v-for="menu in menus" :key="menu.key" class="border-b-[1px] transition-all"
+               :class="store.sidebarExpanded ? 'p-4' : 'p-2'">
             <p
               v-show="store.sidebarExpanded"
               class="uppercase text-xs font-light text-gray-400 mb-2 tracking-widest transition-all duration-300 delay-100"
@@ -73,7 +115,8 @@ const toggleSidebar = () => {
               {{ menu.name }}
             </p>
             <ul>
-              <li v-for="child in menu.routes" :key="`${menu.key}-${child.path}`" class="flex items-center mb-1 rounded-md">
+              <li v-for="child in menu.routes" :key="`${menu.key}-${child.path}`"
+                  class="flex items-center mb-1 rounded-md">
                 <TooltipProvider :disable-hoverable-content="true">
                   <Tooltip :delay-duration="0">
                     <TooltipTrigger class="w-full">
@@ -162,7 +205,8 @@ const toggleSidebar = () => {
         </ScrollArea>
       </div>
 
-      <div class="border-t-[1px] transition-all duration-400 py-4" :class="store.sidebarExpanded ? 'opacity-100' : 'opacity-0'">
+      <div class="border-t-[1px] transition-all duration-400 py-4"
+           :class="store.sidebarExpanded ? 'opacity-100' : 'opacity-0'">
         <p class="text-xs text-foreground/50 text-center">&copy; 2024 Dashcn</p>
       </div>
     </div>

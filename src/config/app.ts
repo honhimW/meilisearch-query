@@ -35,6 +35,12 @@ export const APP_MENU: Record<string, { name: string, routes: IDashboardMenus[] 
         description: 'Manage Tasks'
       },
       {
+        title: 'Mails',
+        icon: 'Mails',
+        path: 'mails',
+        description: 'Manage Mails'
+      },
+      {
         path: 'settings',
         title: 'Settings',
         icon: 'Settings2',

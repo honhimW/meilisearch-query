@@ -45,6 +45,14 @@ const router = createRouter({
           } as RouteMeta & IRouteMeta
         },
         {
+          path: 'mails',
+          name: 'mail_index',
+          component: () => import('@/views/dashboard/examples/mail/Example.vue'),
+          meta: {
+            title: 'Mail',
+          } as RouteMeta & IRouteMeta
+        },
+        {
           path: 'query',
           name: 'query_index',
           component: () => import('@/views/dashboard/examples/query/Index.vue'),

@@ -17,7 +17,7 @@ const SHRINKED = 72;
 export const useAppStore = defineStore('app', {
   state: () => <IAppStore>({
     themeMode: LIGHT,
-    sidebarExpand: true,
+    sidebarExpand: false,
     wrapperWidth: 0,
     wrapperLeftOffset: 0,
     navWidth: '100%'
