@@ -73,6 +73,16 @@ export const useAppStore = defineStore('app', {
       document.body.classList.remove(LIGHT, DARK);
       document.documentElement.classList.add(this.themeMode);
       document.body.classList.add(this.themeMode);
+      window.dispatchEvent(new ThemeChangeEvent('themeChange', this.themeMode))
     },
   },
 });
+
+export class ThemeChangeEvent extends Event {
+  theme: string;
+
+  constructor(type: string, theme: string) {
+    super(type);
+    this.theme = theme;
+  }
+}

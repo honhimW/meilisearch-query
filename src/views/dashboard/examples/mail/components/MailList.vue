@@ -5,12 +5,27 @@ import { ScrollArea } from '@/components/ui/scroll-area'
 import { cn } from '@/lib/utils'
 import { Badge } from '@/components/ui/badge'
 
+export interface MDocument {
+  indexUid?: string
+  id?: string
+  doc: Record<string, any>
+}
+
+interface IndexSettings {
+  uid: string
+  idField: string
+  selectedFields: string[]
+}
+
 interface MailListProps {
   items: Mail[]
 }
 
-defineProps<MailListProps>()
-const selectedMail = defineModel<string>('selectedMail', { required: false })
+defineProps<{
+  documents: MDocument[]
+  indexSettings: IndexSettings
+}>()
+const selectedDocument = defineModel<MDocument>('selectedDocument', { required: false })
 
 function getBadgeVariantFromLabel(label: string) {
   if (['work'].includes(label.toLowerCase()))
@@ -28,46 +43,35 @@ function getBadgeVariantFromLabel(label: string) {
     <div class="flex-1 flex flex-col gap-2 p-4 pt-0">
       <TransitionGroup name="list" appear>
         <button
-          v-for="item of items"
+          v-for="item of documents"
           :key="item.id"
           :class="cn(
             'flex flex-col items-start gap-2 rounded-lg border p-3 text-left text-sm transition-all hover:bg-accent',
-            selectedMail === item.id && 'bg-muted',
+            selectedDocument === item && 'bg-muted',
           )"
-          @click="selectedMail = item.id"
+          @click="selectedDocument = item"
         >
           <div class="flex w-full flex-col gap-1">
             <div class="flex items-center">
               <div class="flex items-center gap-2">
                 <div class="font-semibold">
-                  {{ item.name }}
+                  {{ item.indexUid }}
                 </div>
-                <span v-if="!item.read" class="flex h-2 w-2 rounded-full bg-blue-600" />
-              </div>
-              <div
-                :class="cn(
-                  'ml-auto text-xs',
-                  selectedMail === item.id
-                    ? 'text-foreground'
-                    : 'text-muted-foreground',
-                )"
-              >
-                {{ formatDistanceToNow(new Date(item.date), { addSuffix: true }) }}
               </div>
             </div>
 
             <div class="text-xs font-medium">
-              {{ item.subject }}
+              {{ item.id }}
             </div>
           </div>
           <div class="line-clamp-2 text-xs text-muted-foreground">
-            {{ item.text.substring(0, 300) }}
+            {{ JSON.stringify(item.doc).substring(0, 300) }}
           </div>
-          <div class="flex items-center gap-2">
-            <Badge v-for="label of item.labels" :key="label" :variant="getBadgeVariantFromLabel(label)">
-              {{ label }}
-            </Badge>
-          </div>
+<!--          <div class="flex items-center gap-2">-->
+<!--            <Badge v-for="label of item.labels" :key="label" :variant="getBadgeVariantFromLabel(label)">-->
+<!--              {{ label }}-->
+<!--            </Badge>-->
+<!--          </div>-->
         </button>
       </TransitionGroup>
     </div>

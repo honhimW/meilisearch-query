@@ -1,32 +1,27 @@
 <script lang="ts" setup>
-import {
-  Search,
-} from 'lucide-vue-next'
+import { Search } from 'lucide-vue-next'
 
 import { computed, ref } from 'vue'
 import { refDebounced } from '@vueuse/core'
-import AccountSwitcher from './AccountSwitcher.vue'
+import IndexSwitcher from './IndexSwitcher.vue'
 import MailList from './MailList.vue'
 import MailDisplay from './MailDisplay.vue'
-import Nav, { type Attribute } from './Nav.vue'
+import Screen, { type Attribute, type ScreenProps } from './Screen.vue'
 import { cn } from '@/lib/utils'
 import { Separator } from '@/components/ui/separator'
 import { Input } from '@/components/ui/input'
-import {
-  Tabs,
-  TabsContent,
-  TabsList,
-  TabsTrigger,
-} from '@/components/ui/tabs'
+import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs'
 import { TooltipProvider } from '@/components/ui/tooltip'
 import { ResizableHandle, ResizablePanel, ResizablePanelGroup } from '@/components/ui/resizable'
+import type { MDocument } from '@/views/dashboard/examples/mail/components/MailList.vue'
 
 interface Mail {
   id: string
   name: string
   email: string
-  subject: string
-  text: string
+  indexUid: string
+  document: string
+  doc: Record<string, any>
   date: string
   read: boolean
   labels: string[]
@@ -34,23 +29,25 @@ interface Mail {
 
 interface MailProps {
   indexes: {
-    index: string
-    email: string
-    icon: string
+    uid: string
+    count: string
   }[]
   mails: Mail[]
   defaultLayout?: number[]
   defaultCollapsed?: boolean
-  navCollapsedSize: number
+  screenCollapsedSize: number
 }
 
 const props = withDefaults(defineProps<MailProps>(), {
   defaultCollapsed: false,
-  defaultLayout: () => [265, 440, 655],
+  defaultLayout: () => [265, 440, 655]
 })
 
 const isCollapsed = ref(props.defaultCollapsed)
-const selectedMail = ref<string | undefined>(props.mails[0].id)
+
+const spreadDocument = ref(true)
+const selectedIndex = ref<string | undefined>(props.indexes[0].uid)
+
 const searchValue = ref('')
 const debouncedSearch = refDebounced(searchValue, 250)
 
@@ -59,125 +56,74 @@ const filteredMailList = computed(() => {
   const searchValue = debouncedSearch.value?.trim()
   if (!searchValue) {
     output = props.mails
-  }
-
-  else {
+  } else {
     output = props.mails.filter((item) => {
       return item.name.includes(debouncedSearch.value)
         || item.email.includes(debouncedSearch.value)
         || item.name.includes(debouncedSearch.value)
-        || item.subject.includes(debouncedSearch.value)
-        || item.text.includes(debouncedSearch.value)
+        || item.indexUid.includes(debouncedSearch.value)
+        || item.document.includes(debouncedSearch.value)
     })
   }
 
   return output
 })
 
+const documentList = computed(() => {
+  let documents: MDocument[] = []
+  documents.push(
+    {
+      indexUid: selectedIndex.value,
+      id: '1',
+      doc: {
+        id: '1',
+        log_level: 'DEBUG',
+        profiles: ['dev', 'test']
+      }
+    }
+  )
+  return documents
+})
+
 const unreadMailList = computed(() => filteredMailList.value.filter(item => !item.read))
 
-const selectedMailData = computed(() => props.mails.find(item => item.id === selectedMail.value))
+const selectedDocument = ref<MDocument | undefined>(undefined)
 
-const visibleAttributes: Attribute[] = [
-  {
-    title: 'id',
-    label: '1',
-    icon: '',
-    variant: 'default',
-  },
-  {
-    title: 'timestamp',
-    label: '0',
-    icon: '',
-    variant: 'ghost',
-  },
-]
+const selectedDocumentData = computed(() => selectedDocument.value)
 
-// const links: LinkProp[] = [
-//   {
-//     title: 'Inbox',
-//     label: '128',
-//     icon: 'lucide:inbox',
-//     variant: 'default',
-//   },
-//   {
-//     title: 'Drafts',
-//     label: '9',
-//     icon: 'lucide:file',
-//     variant: 'ghost',
-//   },
-//   {
-//     title: 'Sent',
-//     label: '',
-//     icon: 'lucide:send',
-//     variant: 'ghost',
-//   },
-//   {
-//     title: 'Junk',
-//     label: '23',
-//     icon: 'lucide:archive',
-//     variant: 'ghost',
-//   },
-//   {
-//     title: 'Trash',
-//     label: '',
-//     icon: 'lucide:trash',
-//     variant: 'ghost',
-//   },
-//   {
-//     title: 'Archive',
-//     label: '',
-//     icon: 'lucide:archive',
-//     variant: 'ghost',
-//   },
-// ]
+const screenAttributes = ref<ScreenProps>({
+  selected: [],
+  unselected: [
+    {
+      title: 'id',
+      label: '1',
+      icon: '',
+      variant: 'default'
+    },
+    {
+      title: 'timestamp',
+      label: '0',
+      icon: '',
+      variant: 'ghost'
+    },
+    {
+      title: 'log_level',
+      label: '1',
+      icon: '',
+      variant: 'ghost'
+    },
+    {
+      title: 'class_name',
+      label: '1',
+      icon: '',
+      variant: 'ghost'
+    }
+  ]
+})
 
-const foundAttributes: Attribute[] = [
-  {
-    title: 'log_level',
-    label: '1',
-    icon: '',
-    variant: 'ghost'
-  },
-  {
-    title: 'class_name',
-    label: '1',
-    icon: '',
-    variant: 'ghost'
-  },
-]
-// const foundAttributes: Attribute[] = [
-//   {
-//     title: 'Social',
-//     label: '972',
-//     icon: 'lucide:user-2',
-//     variant: 'ghost',
-//   },
-//   {
-//     title: 'Updates',
-//     label: '342',
-//     icon: 'lucide:alert-circle',
-//     variant: 'ghost',
-//   },
-//   {
-//     title: 'Forums',
-//     label: '128',
-//     icon: 'lucide:message-square',
-//     variant: 'ghost',
-//   },
-//   {
-//     title: 'Shopping',
-//     label: '8',
-//     icon: 'lucide:shopping-cart',
-//     variant: 'ghost',
-//   },
-//   {
-//     title: 'Promotions',
-//     label: '21',
-//     icon: 'lucide:archive',
-//     variant: 'ghost',
-//   },
-// ]
+function updateAttributes(props: ScreenProps) {
+  screenAttributes.value = props
+}
 
 function onCollapse() {
   isCollapsed.value = true
@@ -198,21 +144,25 @@ function onExpand() {
       <ResizablePanel
         id="resize-panel-1"
         :default-size="defaultLayout[0]"
-        :collapsed-size="navCollapsedSize"
+        :collapsed-size="screenCollapsedSize"
         collapsible
         :min-size="15"
-        :max-size="20"
+        :max-size="15"
         :class="cn(isCollapsed && 'min-w-[50px] transition-all duration-300 ease-in-out')"
         @expand="onExpand"
         @collapse="onCollapse"
       >
         <div :class="cn('flex h-[52px] items-center justify-center', isCollapsed ? 'h-[52px]' : 'px-2')">
-          <AccountSwitcher :is-collapsed="isCollapsed" :accounts="indexes" />
+          <IndexSwitcher
+            :is-collapsed="isCollapsed"
+            :indexes="indexes"
+            @update:index="payload => {selectedIndex = payload}" />
         </div>
         <Separator />
-        <Nav
-          :selected="visibleAttributes"
-          :unselected="foundAttributes"
+        <Screen
+          :selected="screenAttributes.selected"
+          :unselected="screenAttributes.unselected"
+          @updateFields="updateAttributes"
         />
       </ResizablePanel>
       <ResizableHandle id="resize-handle-1" with-handle />
@@ -220,14 +170,14 @@ function onExpand() {
         <Tabs default-value="all">
           <div class="flex items-center px-4 py-2">
             <h1 class="text-xl font-bold">
-              Inbox
+              Result
             </h1>
             <TabsList class="ml-auto">
               <TabsTrigger value="all" class="text-zinc-600 dark:text-zinc-200">
-                All mail
+                Struct
               </TabsTrigger>
               <TabsTrigger value="unread" class="text-zinc-600 dark:text-zinc-200">
-                Unread
+                Plain
               </TabsTrigger>
             </TabsList>
           </div>
@@ -241,16 +191,17 @@ function onExpand() {
             </form>
           </div>
           <TabsContent value="all" class="m-0">
-            <MailList v-model:selected-mail="selectedMail" :items="filteredMailList" />
+            <MailList v-model:selected-document="selectedDocument" :items="filteredMailList"
+                      :documents="documentList" />
           </TabsContent>
           <TabsContent value="unread" class="m-0">
-            <MailList v-model:selected-mail="selectedMail" :items="unreadMailList" />
+            <MailList v-model:selected-document="selectedDocument" :items="unreadMailList" :documents="documentList" />
           </TabsContent>
         </Tabs>
       </ResizablePanel>
       <ResizableHandle id="resiz-handle-2" with-handle />
-      <ResizablePanel id="resize-panel-3" :default-size="defaultLayout[2]">
-        <MailDisplay :mail="selectedMailData" />
+      <ResizablePanel v-if="spreadDocument" id="resize-panel-3" :default-size="defaultLayout[2]">
+        <MailDisplay :doc="selectedDocumentData" />
       </ResizablePanel>
     </ResizablePanelGroup>
   </TooltipProvider>

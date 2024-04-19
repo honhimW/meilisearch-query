@@ -1,6 +1,6 @@
 <script lang="ts" setup>
 import { Archive, ArchiveX, Clock, Forward, MoreVertical, Reply, ReplyAll, Trash2 } from 'lucide-vue-next'
-import { computed } from 'vue'
+import { computed, onMounted, ref } from 'vue'
 import addDays from 'date-fns/addDays'
 import addHours from 'date-fns/addHours'
 import format from 'date-fns/format'
@@ -16,9 +16,15 @@ import { Separator } from '@/components/ui/separator'
 import { Switch } from '@/components/ui/switch'
 import { Textarea } from '@/components/ui/textarea'
 import { Tooltip, TooltipContent, TooltipTrigger } from '@/components/ui/tooltip'
+import type { MDocument } from '@/views/dashboard/examples/mail/components/MailList.vue'
+import jsonWorker from 'monaco-editor/esm/vs/language/json/json.worker?worker'
+import * as monaco from "monaco-editor";
+import MonacoEditor from '@/views/dashboard/examples/mail/components/MonacoEditor.vue'
+import { ThemeChangeEvent } from '@/stores/app'
 
 interface MailDisplayProps {
   mail: Mail | undefined
+  doc: MDocument | undefined
 }
 
 const props = defineProps<MailDisplayProps>()
@@ -30,6 +36,21 @@ const mailFallbackName = computed(() => {
     .join('')
 })
 
+onMounted(() => {
+  window.addEventListener('themeChange', ev => {
+    let theme = (ev as ThemeChangeEvent).theme
+    monacoTheme.value = toMonacoTheme(theme)
+    console.log(monacoTheme)
+  })
+  monacoTheme.value = toMonacoTheme(localStorage.getItem('themeMode') as string)
+})
+
+const toMonacoTheme = (themeMode: string) => {
+  return themeMode === 'light' ? 'vs' : 'vs-dark'
+}
+
+const monacoTheme = ref(undefined)
+
 const today = new Date()
 </script>
 
@@ -39,7 +60,7 @@ const today = new Date()
       <div class="flex items-center gap-2">
         <Tooltip>
           <TooltipTrigger as-child>
-            <Button variant="ghost" size="icon" :disabled="!mail">
+            <Button variant="ghost" size="icon" :disabled="!doc">
               <Archive class="size-4" />
               <span class="sr-only">Archive</span>
             </Button>
@@ -48,7 +69,7 @@ const today = new Date()
         </Tooltip>
         <Tooltip>
           <TooltipTrigger as-child>
-            <Button variant="ghost" size="icon" :disabled="!mail">
+            <Button variant="ghost" size="icon" :disabled="!doc">
               <ArchiveX class="size-4" />
               <span class="sr-only">Move to junk</span>
             </Button>
@@ -57,7 +78,7 @@ const today = new Date()
         </Tooltip>
         <Tooltip>
           <TooltipTrigger as-child>
-            <Button variant="ghost" size="icon" :disabled="!mail">
+            <Button variant="ghost" size="icon" :disabled="!doc">
               <Trash2 class="size-4" />
               <span class="sr-only">Move to trash</span>
             </Button>
@@ -69,7 +90,7 @@ const today = new Date()
           <Popover>
             <PopoverTrigger as-child>
               <TooltipTrigger as-child>
-                <Button variant="ghost" size="icon" :disabled="!mail">
+                <Button variant="ghost" size="icon" :disabled="!doc">
                   <Clock class="size-4" />
                   <span class="sr-only">Snooze</span>
                 </Button>
@@ -130,7 +151,7 @@ const today = new Date()
       <div class="ml-auto flex items-center gap-2">
         <Tooltip>
           <TooltipTrigger as-child>
-            <Button variant="ghost" size="icon" :disabled="!mail">
+            <Button variant="ghost" size="icon" :disabled="!doc">
               <Reply class="size-4" />
               <span class="sr-only">Reply</span>
             </Button>
@@ -139,7 +160,7 @@ const today = new Date()
         </Tooltip>
         <Tooltip>
           <TooltipTrigger as-child>
-            <Button variant="ghost" size="icon" :disabled="!mail">
+            <Button variant="ghost" size="icon" :disabled="!doc">
               <ReplyAll class="size-4" />
               <span class="sr-only">Reply all</span>
             </Button>
@@ -148,7 +169,7 @@ const today = new Date()
         </Tooltip>
         <Tooltip>
           <TooltipTrigger as-child>
-            <Button variant="ghost" size="icon" :disabled="!mail">
+            <Button variant="ghost" size="icon" :disabled="!doc">
               <Forward class="size-4" />
               <span class="sr-only">Forward</span>
             </Button>
@@ -159,7 +180,7 @@ const today = new Date()
       <Separator orientation="vertical" class="mx-2 h-6" />
       <DropdownMenu>
         <DropdownMenuTrigger as-child>
-          <Button variant="ghost" size="icon" :disabled="!mail">
+          <Button variant="ghost" size="icon" :disabled="!doc">
             <MoreVertical class="size-4" />
             <span class="sr-only">More</span>
           </Button>
@@ -173,41 +194,43 @@ const today = new Date()
       </DropdownMenu>
     </div>
     <Separator />
-    <div v-if="mail" class="flex flex-1 flex-col">
+    <div v-if="doc" class="flex flex-1 flex-col">
       <div class="flex items-start p-4">
         <div class="flex items-start gap-4 text-sm">
-          <Avatar>
-            <AvatarFallback>
-              {{ mailFallbackName }}
-            </AvatarFallback>
-          </Avatar>
+<!--          <Avatar>-->
+<!--            <AvatarFallback>-->
+<!--              {{ mailFallbackName }}-->
+<!--            </AvatarFallback>-->
+<!--          </Avatar>-->
           <div class="grid gap-1">
             <div class="font-semibold">
-              {{ mail.name }}
+              {{ doc.indexUid }}
             </div>
             <div class="line-clamp-1 text-xs">
-              {{ mail.subject }}
-            </div>
-            <div class="line-clamp-1 text-xs">
-              <span class="font-medium">Reply-To:</span> {{ mail.email }}
+              {{ doc.id }}
             </div>
           </div>
         </div>
-        <div v-if="mail.date" class="ml-auto text-xs text-muted-foreground">
-          {{ format(new Date(mail.date), "PPpp") }}
+        <div v-if="doc.date" class="ml-auto text-xs text-muted-foreground">
+          {{ format(new Date(doc.date), "PPpp") }}
         </div>
       </div>
       <Separator />
-      <div class="flex-1 whitespace-pre-wrap p-4 text-sm">
-        {{ mail.text }}
-      </div>
+      <MonacoEditor
+        :theme="monacoTheme"
+        :model-value="JSON.stringify(doc.doc, null, 2)"
+        language="json"
+      />
+<!--      <div class="flex-1 whitespace-pre-wrap p-4 text-sm">-->
+<!--        {{ doc.doc }}-->
+<!--      </div>-->
       <Separator class="mt-auto" />
       <div class="p-4">
         <form>
           <div class="grid gap-4">
             <Textarea
               class="p-4"
-              :placeholder="`Reply ${mail.name}...`"
+              :placeholder="`Reply ${doc.name}...`"
             />
             <div class="flex items-center">
               <Label

@@ -47,7 +47,7 @@ const router = createRouter({
         {
           path: 'mails',
           name: 'mail_index',
-          component: () => import('@/views/dashboard/examples/mail/Example.vue'),
+          component: () => import('@/views/dashboard/examples/mail/Mails.vue'),
           meta: {
             title: 'Mail',
           } as RouteMeta & IRouteMeta
