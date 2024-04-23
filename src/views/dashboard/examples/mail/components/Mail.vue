@@ -45,7 +45,7 @@ interface IndexHolder {
 
 const props = withDefaults(defineProps<MailProps>(), {
   defaultCollapsed: false,
-  defaultLayout: () => [265, 440, 655]
+  defaultLayout: () => [15, 85, 655]
 })
 
 onMounted(() => {
@@ -90,82 +90,7 @@ const selectedIndex = ref<string | undefined>(indexes.value[0].uid)
 const searchValue = ref('')
 const debouncedSearch = refDebounced(searchValue, 250)
 
-const documentList = computed(() => {
-  let documents: MDocument[] = []
-  documents.push(
-    {
-      indexUid: selectedIndex.value,
-      id: '1',
-      doc: {
-        id: '1',
-        log_level: 'DEBUG',
-        profiles: ['dev', 'test'],
-        metadata: 'MIIEvgIBADANBgkqhkiG9w0BAQEFAASCBKgwggSkAgEAAoIBAQDVMocYuY0pUVoXKLeYXUmcMVmeXhBeqcrp0v0dusspAq5xZlGbff+D1/d5u4avkKbaybs0nS1jj1p5T005tmEEocjIze7MN86kTv4XVj4iysEKoZUA9760ka51bwxV4HuBrEKGYHbQSMwgTAbCO75swp2gJPn3VSbSpDbO/Srgw0y/QxuiBXF7wX3ZFsw9tSbQgm3UkcZqKdHEFoSeTy5hWf4Iz78Gn83Zwn0814Fv37YW1qHDe3akQhXv7K10xxxYenw0'
-      }
-    },
-    {
-      indexUid: selectedIndex.value,
-      id: '2',
-      doc: {
-        id: '2',
-        log_level: 'DEBUG',
-        profiles: ['dev', 'test'],
-        metadata: 'MIIEvAIBADANBgkqhkiG9w0BAQEFAASCBKYwggSiAgEAAoIBAQCMN1A1k9Dqid5oDSwfX+Rj3JMJR5T+VURZAf0QpV/PNoD1+wD3JM3XEiifSPMVFXtwouBKQmCwx3+FyXlYHhLY+IppH/RyGiMwVCBgpsOCnUBvOjF2lSwMpLY0mitrmTwR9f/FEzzhAeKkLChl7Ezhfx2CEMPl8nzmV1pH0JLm8Re+VIpq9ojPD7jM6qmAjxV17mBrn4FedlqIdnHfvnQ0gBEksjE1yx3+k6XiO/0fULGqOQzDzu7VsUX1ktqLnpP83rhTdxoPHaAoIzy441kb2ynxjFV2bhBtmo+257ggO6Z7XyhpRwAoUd8+IOyEYsd973z8u9Jr/1Ep+fZN8ngdAgMBAAECggEAHxFOc2CaJK2Bmvp4MUd0+m9wINk8eRH5f+NB6ENMNER2VIpWD2yXMzUxzQFD4wMMg8uC+NE2TVUWu1UFzvFy6aJAQMS0y+dgrp+lQOUSYslm8n4pYYXx6adBO+yA/GlKdwxTrJ3zmkNprUifdt3htwEMT7pZPYT6CauHNGxRcFvdDHs0v7PZk1gPmtOK1uOWt8Wa6g8rWX4e3BUFoFe4y1ippZA/wrCrRH+AiLOYQDnEB5AvvzCU0wyhPcWRGdnbgbnHkbD/o6EjZHeuQ5uDmftPA8wUsaSkB9bBkBZkUqtUbIXneqyVCazkYvnKFNXlGP7o2dtfPuB7XTJjxLnB4QKBgQDEboXJLaysR1EPUsrndroKHFBfyXCWGTrzg0jdI2iaPW1+EHqqb5axug8IxMybDHFn34zZI4Fk5G6NRp15Nc3aWxk94cG2xYAdUxfsFS3HlPlcb3VZ7W//Oa1YFR+54o5uv5qa40ntjv7zeo4LaGcK/PK0LvukPawtwnRoAqEiOQKBgQC2vKGDXGly6FySVNEwRNlDxrQmnRq+VqRPaRrdC8k3pdhBfCnAgytYKrrcDJi1M10EsgFG3wF3eRtL4kOfb+Pq4Px6QnN7f+ae7FTn5Y9TeryfNfsee2BgNd6haZ0uXmdC+9iCcRirCbJL1IfFiwztKeEXRwDhHg6yHzoVfm81BQKBgA1AO2wv1ZcllHVJK4DjxHcMI+viReMKPqzQrWili9fjzvATIoM+1daVa5A23mqTM09DiFfZilAJDOAg5FyZ4ZIaVSCUiyHOPu87fMCjSRxOk2fF6Q+w8b4w4N2xRxueCee0qzRJouIQpGg+WzivyUu3dpPrG3Sf6G6J0Jp3mvEZAoGAF+G9JgLM0TSm7ITjNfC5iE8OukEr/pYqMSqmVR82M+ybv6svdbZu0r3638lRp9THolZ1LkL02R1dwOQYPF0OJ2Mx+/R1TT2g8UInsorg2WMgBZqzb/9l0A0aRHQeE7JIwotRd3K6a5f/0kM7X0jV7qTbgwRHjCQ2fXbxS1/TvtUCgYABPnJiHVhqRfvAoZm+q46Ghm2Z3HSVJH+ErPLV2fFZG9rMw9GzRYVkkyXlvBqdSRhhZmXBxiKWwj8vD63w+piQOgrxtv+Bz4LZLVtn3BeyC8JZHNbsJB+F7RtLF8iQqgTKkSqHDLP/The4wiGoQyRNd4rcR3JmP0RcY8If3W7sIA=='
-      }
-    },
-    {
-      indexUid: selectedIndex.value,
-      id: '2',
-      doc: {
-        id: '2',
-        log_level: 'DEBUG',
-        profiles: ['dev', 'test'],
-        metadata: 'MIIEvAIBADANBgkqhkiG9w0BAQEFAASCBKYwggSiAgEAAoIBAQCMN1A1k9Dqid5oDSwfX+Rj3JMJR5T+VURZAf0QpV/PNoD1+wD3JM3XEiifSPMVFXtwouBKQmCwx3+FyXlYHhLY+IppH/RyGiMwVCBgpsOCnUBvOjF2lSwMpLY0mitrmTwR9f/FEzzhAeKkLChl7Ezhfx2CEMPl8nzmV1pH0JLm8Re+VIpq9ojPD7jM6qmAjxV17mBrn4FedlqIdnHfvnQ0gBEksjE1yx3+k6XiO/0fULGqOQzDzu7VsUX1ktqLnpP83rhTdxoPHaAoIzy441kb2ynxjFV2bhBtmo+257ggO6Z7XyhpRwAoUd8+IOyEYsd973z8u9Jr/1Ep+fZN8ngdAgMBAAECggEAHxFOc2CaJK2Bmvp4MUd0+m9wINk8eRH5f+NB6ENMNER2VIpWD2yXMzUxzQFD4wMMg8uC+NE2TVUWu1UFzvFy6aJAQMS0y+dgrp+lQOUSYslm8n4pYYXx6adBO+yA/GlKdwxTrJ3zmkNprUifdt3htwEMT7pZPYT6CauHNGxRcFvdDHs0v7PZk1gPmtOK1uOWt8Wa6g8rWX4e3BUFoFe4y1ippZA/wrCrRH+AiLOYQDnEB5AvvzCU0wyhPcWRGdnbgbnHkbD/o6EjZHeuQ5uDmftPA8wUsaSkB9bBkBZkUqtUbIXneqyVCazkYvnKFNXlGP7o2dtfPuB7XTJjxLnB4QKBgQDEboXJLaysR1EPUsrndroKHFBfyXCWGTrzg0jdI2iaPW1+EHqqb5axug8IxMybDHFn34zZI4Fk5G6NRp15Nc3aWxk94cG2xYAdUxfsFS3HlPlcb3VZ7W//Oa1YFR+54o5uv5qa40ntjv7zeo4LaGcK/PK0LvukPawtwnRoAqEiOQKBgQC2vKGDXGly6FySVNEwRNlDxrQmnRq+VqRPaRrdC8k3pdhBfCnAgytYKrrcDJi1M10EsgFG3wF3eRtL4kOfb+Pq4Px6QnN7f+ae7FTn5Y9TeryfNfsee2BgNd6haZ0uXmdC+9iCcRirCbJL1IfFiwztKeEXRwDhHg6yHzoVfm81BQKBgA1AO2wv1ZcllHVJK4DjxHcMI+viReMKPqzQrWili9fjzvATIoM+1daVa5A23mqTM09DiFfZilAJDOAg5FyZ4ZIaVSCUiyHOPu87fMCjSRxOk2fF6Q+w8b4w4N2xRxueCee0qzRJouIQpGg+WzivyUu3dpPrG3Sf6G6J0Jp3mvEZAoGAF+G9JgLM0TSm7ITjNfC5iE8OukEr/pYqMSqmVR82M+ybv6svdbZu0r3638lRp9THolZ1LkL02R1dwOQYPF0OJ2Mx+/R1TT2g8UInsorg2WMgBZqzb/9l0A0aRHQeE7JIwotRd3K6a5f/0kM7X0jV7qTbgwRHjCQ2fXbxS1/TvtUCgYABPnJiHVhqRfvAoZm+q46Ghm2Z3HSVJH+ErPLV2fFZG9rMw9GzRYVkkyXlvBqdSRhhZmXBxiKWwj8vD63w+piQOgrxtv+Bz4LZLVtn3BeyC8JZHNbsJB+F7RtLF8iQqgTKkSqHDLP/The4wiGoQyRNd4rcR3JmP0RcY8If3W7sIA=='
-      }
-    },
-    {
-      indexUid: selectedIndex.value,
-      id: '2',
-      doc: {
-        id: '2',
-        log_level: 'DEBUG',
-        profiles: ['dev', 'test'],
-        metadata: 'MIIEvAIBADANBgkqhkiG9w0BAQEFAASCBKYwggSiAgEAAoIBAQCMN1A1k9Dqid5oDSwfX+Rj3JMJR5T+VURZAf0QpV/PNoD1+wD3JM3XEiifSPMVFXtwouBKQmCwx3+FyXlYHhLY+IppH/RyGiMwVCBgpsOCnUBvOjF2lSwMpLY0mitrmTwR9f/FEzzhAeKkLChl7Ezhfx2CEMPl8nzmV1pH0JLm8Re+VIpq9ojPD7jM6qmAjxV17mBrn4FedlqIdnHfvnQ0gBEksjE1yx3+k6XiO/0fULGqOQzDzu7VsUX1ktqLnpP83rhTdxoPHaAoIzy441kb2ynxjFV2bhBtmo+257ggO6Z7XyhpRwAoUd8+IOyEYsd973z8u9Jr/1Ep+fZN8ngdAgMBAAECggEAHxFOc2CaJK2Bmvp4MUd0+m9wINk8eRH5f+NB6ENMNER2VIpWD2yXMzUxzQFD4wMMg8uC+NE2TVUWu1UFzvFy6aJAQMS0y+dgrp+lQOUSYslm8n4pYYXx6adBO+yA/GlKdwxTrJ3zmkNprUifdt3htwEMT7pZPYT6CauHNGxRcFvdDHs0v7PZk1gPmtOK1uOWt8Wa6g8rWX4e3BUFoFe4y1ippZA/wrCrRH+AiLOYQDnEB5AvvzCU0wyhPcWRGdnbgbnHkbD/o6EjZHeuQ5uDmftPA8wUsaSkB9bBkBZkUqtUbIXneqyVCazkYvnKFNXlGP7o2dtfPuB7XTJjxLnB4QKBgQDEboXJLaysR1EPUsrndroKHFBfyXCWGTrzg0jdI2iaPW1+EHqqb5axug8IxMybDHFn34zZI4Fk5G6NRp15Nc3aWxk94cG2xYAdUxfsFS3HlPlcb3VZ7W//Oa1YFR+54o5uv5qa40ntjv7zeo4LaGcK/PK0LvukPawtwnRoAqEiOQKBgQC2vKGDXGly6FySVNEwRNlDxrQmnRq+VqRPaRrdC8k3pdhBfCnAgytYKrrcDJi1M10EsgFG3wF3eRtL4kOfb+Pq4Px6QnN7f+ae7FTn5Y9TeryfNfsee2BgNd6haZ0uXmdC+9iCcRirCbJL1IfFiwztKeEXRwDhHg6yHzoVfm81BQKBgA1AO2wv1ZcllHVJK4DjxHcMI+viReMKPqzQrWili9fjzvATIoM+1daVa5A23mqTM09DiFfZilAJDOAg5FyZ4ZIaVSCUiyHOPu87fMCjSRxOk2fF6Q+w8b4w4N2xRxueCee0qzRJouIQpGg+WzivyUu3dpPrG3Sf6G6J0Jp3mvEZAoGAF+G9JgLM0TSm7ITjNfC5iE8OukEr/pYqMSqmVR82M+ybv6svdbZu0r3638lRp9THolZ1LkL02R1dwOQYPF0OJ2Mx+/R1TT2g8UInsorg2WMgBZqzb/9l0A0aRHQeE7JIwotRd3K6a5f/0kM7X0jV7qTbgwRHjCQ2fXbxS1/TvtUCgYABPnJiHVhqRfvAoZm+q46Ghm2Z3HSVJH+ErPLV2fFZG9rMw9GzRYVkkyXlvBqdSRhhZmXBxiKWwj8vD63w+piQOgrxtv+Bz4LZLVtn3BeyC8JZHNbsJB+F7RtLF8iQqgTKkSqHDLP/The4wiGoQyRNd4rcR3JmP0RcY8If3W7sIA=='
-      }
-    },
-    {
-      indexUid: selectedIndex.value,
-      id: '2',
-      doc: {
-        id: '2',
-        log_level: 'DEBUG',
-        profiles: ['dev', 'test'],
-        metadata: 'MIIEvAIBADANBgkqhkiG9w0BAQEFAASCBKYwggSiAgEAAoIBAQCMN1A1k9Dqid5oDSwfX+Rj3JMJR5T+VURZAf0QpV/PNoD1+wD3JM3XEiifSPMVFXtwouBKQmCwx3+FyXlYHhLY+IppH/RyGiMwVCBgpsOCnUBvOjF2lSwMpLY0mitrmTwR9f/FEzzhAeKkLChl7Ezhfx2CEMPl8nzmV1pH0JLm8Re+VIpq9ojPD7jM6qmAjxV17mBrn4FedlqIdnHfvnQ0gBEksjE1yx3+k6XiO/0fULGqOQzDzu7VsUX1ktqLnpP83rhTdxoPHaAoIzy441kb2ynxjFV2bhBtmo+257ggO6Z7XyhpRwAoUd8+IOyEYsd973z8u9Jr/1Ep+fZN8ngdAgMBAAECggEAHxFOc2CaJK2Bmvp4MUd0+m9wINk8eRH5f+NB6ENMNER2VIpWD2yXMzUxzQFD4wMMg8uC+NE2TVUWu1UFzvFy6aJAQMS0y+dgrp+lQOUSYslm8n4pYYXx6adBO+yA/GlKdwxTrJ3zmkNprUifdt3htwEMT7pZPYT6CauHNGxRcFvdDHs0v7PZk1gPmtOK1uOWt8Wa6g8rWX4e3BUFoFe4y1ippZA/wrCrRH+AiLOYQDnEB5AvvzCU0wyhPcWRGdnbgbnHkbD/o6EjZHeuQ5uDmftPA8wUsaSkB9bBkBZkUqtUbIXneqyVCazkYvnKFNXlGP7o2dtfPuB7XTJjxLnB4QKBgQDEboXJLaysR1EPUsrndroKHFBfyXCWGTrzg0jdI2iaPW1+EHqqb5axug8IxMybDHFn34zZI4Fk5G6NRp15Nc3aWxk94cG2xYAdUxfsFS3HlPlcb3VZ7W//Oa1YFR+54o5uv5qa40ntjv7zeo4LaGcK/PK0LvukPawtwnRoAqEiOQKBgQC2vKGDXGly6FySVNEwRNlDxrQmnRq+VqRPaRrdC8k3pdhBfCnAgytYKrrcDJi1M10EsgFG3wF3eRtL4kOfb+Pq4Px6QnN7f+ae7FTn5Y9TeryfNfsee2BgNd6haZ0uXmdC+9iCcRirCbJL1IfFiwztKeEXRwDhHg6yHzoVfm81BQKBgA1AO2wv1ZcllHVJK4DjxHcMI+viReMKPqzQrWili9fjzvATIoM+1daVa5A23mqTM09DiFfZilAJDOAg5FyZ4ZIaVSCUiyHOPu87fMCjSRxOk2fF6Q+w8b4w4N2xRxueCee0qzRJouIQpGg+WzivyUu3dpPrG3Sf6G6J0Jp3mvEZAoGAF+G9JgLM0TSm7ITjNfC5iE8OukEr/pYqMSqmVR82M+ybv6svdbZu0r3638lRp9THolZ1LkL02R1dwOQYPF0OJ2Mx+/R1TT2g8UInsorg2WMgBZqzb/9l0A0aRHQeE7JIwotRd3K6a5f/0kM7X0jV7qTbgwRHjCQ2fXbxS1/TvtUCgYABPnJiHVhqRfvAoZm+q46Ghm2Z3HSVJH+ErPLV2fFZG9rMw9GzRYVkkyXlvBqdSRhhZmXBxiKWwj8vD63w+piQOgrxtv+Bz4LZLVtn3BeyC8JZHNbsJB+F7RtLF8iQqgTKkSqHDLP/The4wiGoQyRNd4rcR3JmP0RcY8If3W7sIA=='
-      }
-    },
-    {
-      indexUid: selectedIndex.value,
-      id: '2',
-      doc: {
-        id: '2',
-        log_level: 'DEBUG',
-        profiles: ['dev', 'test'],
-        metadata: 'MIIEvAIBADANBgkqhkiG9w0BAQEFAASCBKYwggSiAgEAAoIBAQCMN1A1k9Dqid5oDSwfX+Rj3JMJR5T+VURZAf0QpV/PNoD1+wD3JM3XEiifSPMVFXtwouBKQmCwx3+FyXlYHhLY+IppH/RyGiMwVCBgpsOCnUBvOjF2lSwMpLY0mitrmTwR9f/FEzzhAeKkLChl7Ezhfx2CEMPl8nzmV1pH0JLm8Re+VIpq9ojPD7jM6qmAjxV17mBrn4FedlqIdnHfvnQ0gBEksjE1yx3+k6XiO/0fULGqOQzDzu7VsUX1ktqLnpP83rhTdxoPHaAoIzy441kb2ynxjFV2bhBtmo+257ggO6Z7XyhpRwAoUd8+IOyEYsd973z8u9Jr/1Ep+fZN8ngdAgMBAAECggEAHxFOc2CaJK2Bmvp4MUd0+m9wINk8eRH5f+NB6ENMNER2VIpWD2yXMzUxzQFD4wMMg8uC+NE2TVUWu1UFzvFy6aJAQMS0y+dgrp+lQOUSYslm8n4pYYXx6adBO+yA/GlKdwxTrJ3zmkNprUifdt3htwEMT7pZPYT6CauHNGxRcFvdDHs0v7PZk1gPmtOK1uOWt8Wa6g8rWX4e3BUFoFe4y1ippZA/wrCrRH+AiLOYQDnEB5AvvzCU0wyhPcWRGdnbgbnHkbD/o6EjZHeuQ5uDmftPA8wUsaSkB9bBkBZkUqtUbIXneqyVCazkYvnKFNXlGP7o2dtfPuB7XTJjxLnB4QKBgQDEboXJLaysR1EPUsrndroKHFBfyXCWGTrzg0jdI2iaPW1+EHqqb5axug8IxMybDHFn34zZI4Fk5G6NRp15Nc3aWxk94cG2xYAdUxfsFS3HlPlcb3VZ7W//Oa1YFR+54o5uv5qa40ntjv7zeo4LaGcK/PK0LvukPawtwnRoAqEiOQKBgQC2vKGDXGly6FySVNEwRNlDxrQmnRq+VqRPaRrdC8k3pdhBfCnAgytYKrrcDJi1M10EsgFG3wF3eRtL4kOfb+Pq4Px6QnN7f+ae7FTn5Y9TeryfNfsee2BgNd6haZ0uXmdC+9iCcRirCbJL1IfFiwztKeEXRwDhHg6yHzoVfm81BQKBgA1AO2wv1ZcllHVJK4DjxHcMI+viReMKPqzQrWili9fjzvATIoM+1daVa5A23mqTM09DiFfZilAJDOAg5FyZ4ZIaVSCUiyHOPu87fMCjSRxOk2fF6Q+w8b4w4N2xRxueCee0qzRJouIQpGg+WzivyUu3dpPrG3Sf6G6J0Jp3mvEZAoGAF+G9JgLM0TSm7ITjNfC5iE8OukEr/pYqMSqmVR82M+ybv6svdbZu0r3638lRp9THolZ1LkL02R1dwOQYPF0OJ2Mx+/R1TT2g8UInsorg2WMgBZqzb/9l0A0aRHQeE7JIwotRd3K6a5f/0kM7X0jV7qTbgwRHjCQ2fXbxS1/TvtUCgYABPnJiHVhqRfvAoZm+q46Ghm2Z3HSVJH+ErPLV2fFZG9rMw9GzRYVkkyXlvBqdSRhhZmXBxiKWwj8vD63w+piQOgrxtv+Bz4LZLVtn3BeyC8JZHNbsJB+F7RtLF8iQqgTKkSqHDLP/The4wiGoQyRNd4rcR3JmP0RcY8If3W7sIA=='
-      }
-    },
-    {
-      indexUid: selectedIndex.value,
-      id: '2',
-      doc: {
-        id: '2',
-        log_level: 'DEBUG',
-        profiles: ['dev', 'test'],
-        metadata: 'MIIEvAIBADANBgkqhkiG9w0BAQEFAASCBKYwggSiAgEAAoIBAQCMN1A1k9Dqid5oDSwfX+Rj3JMJR5T+VURZAf0QpV/PNoD1+wD3JM3XEiifSPMVFXtwouBKQmCwx3+FyXlYHhLY+IppH/RyGiMwVCBgpsOCnUBvOjF2lSwMpLY0mitrmTwR9f/FEzzhAeKkLChl7Ezhfx2CEMPl8nzmV1pH0JLm8Re+VIpq9ojPD7jM6qmAjxV17mBrn4FedlqIdnHfvnQ0gBEksjE1yx3+k6XiO/0fULGqOQzDzu7VsUX1ktqLnpP83rhTdxoPHaAoIzy441kb2ynxjFV2bhBtmo+257ggO6Z7XyhpRwAoUd8+IOyEYsd973z8u9Jr/1Ep+fZN8ngdAgMBAAECggEAHxFOc2CaJK2Bmvp4MUd0+m9wINk8eRH5f+NB6ENMNER2VIpWD2yXMzUxzQFD4wMMg8uC+NE2TVUWu1UFzvFy6aJAQMS0y+dgrp+lQOUSYslm8n4pYYXx6adBO+yA/GlKdwxTrJ3zmkNprUifdt3htwEMT7pZPYT6CauHNGxRcFvdDHs0v7PZk1gPmtOK1uOWt8Wa6g8rWX4e3BUFoFe4y1ippZA/wrCrRH+AiLOYQDnEB5AvvzCU0wyhPcWRGdnbgbnHkbD/o6EjZHeuQ5uDmftPA8wUsaSkB9bBkBZkUqtUbIXneqyVCazkYvnKFNXlGP7o2dtfPuB7XTJjxLnB4QKBgQDEboXJLaysR1EPUsrndroKHFBfyXCWGTrzg0jdI2iaPW1+EHqqb5axug8IxMybDHFn34zZI4Fk5G6NRp15Nc3aWxk94cG2xYAdUxfsFS3HlPlcb3VZ7W//Oa1YFR+54o5uv5qa40ntjv7zeo4LaGcK/PK0LvukPawtwnRoAqEiOQKBgQC2vKGDXGly6FySVNEwRNlDxrQmnRq+VqRPaRrdC8k3pdhBfCnAgytYKrrcDJi1M10EsgFG3wF3eRtL4kOfb+Pq4Px6QnN7f+ae7FTn5Y9TeryfNfsee2BgNd6haZ0uXmdC+9iCcRirCbJL1IfFiwztKeEXRwDhHg6yHzoVfm81BQKBgA1AO2wv1ZcllHVJK4DjxHcMI+viReMKPqzQrWili9fjzvATIoM+1daVa5A23mqTM09DiFfZilAJDOAg5FyZ4ZIaVSCUiyHOPu87fMCjSRxOk2fF6Q+w8b4w4N2xRxueCee0qzRJouIQpGg+WzivyUu3dpPrG3Sf6G6J0Jp3mvEZAoGAF+G9JgLM0TSm7ITjNfC5iE8OukEr/pYqMSqmVR82M+ybv6svdbZu0r3638lRp9THolZ1LkL02R1dwOQYPF0OJ2Mx+/R1TT2g8UInsorg2WMgBZqzb/9l0A0aRHQeE7JIwotRd3K6a5f/0kM7X0jV7qTbgwRHjCQ2fXbxS1/TvtUCgYABPnJiHVhqRfvAoZm+q46Ghm2Z3HSVJH+ErPLV2fFZG9rMw9GzRYVkkyXlvBqdSRhhZmXBxiKWwj8vD63w+piQOgrxtv+Bz4LZLVtn3BeyC8JZHNbsJB+F7RtLF8iQqgTKkSqHDLP/The4wiGoQyRNd4rcR3JmP0RcY8If3W7sIA=='
-      }
-    },
-  )
-  return documents
-})
+const documentList = ref([])
 
 const selectedDocument = ref<MDocument | undefined>(undefined)
 
@@ -179,10 +104,11 @@ const mergeResults = ref<Array<MDocument>>([])
 const search = (query?: SearchParams | string) => {
   results.value.length = 0
   mergeResults.value.length = 0
-  let queries: MultiSearchQuery[] = indexes.map(value => {
+  indexes.value.length = 1
+  let queries: MultiSearchQuery[] = indexes.value.map(value => {
     if (typeof query == 'string') {
       return {
-        indexUid: value,
+        indexUid: value.uid,
         q: query,
         attributesToHighlight: ['*'],
         facets: [],
@@ -203,9 +129,8 @@ const search = (query?: SearchParams | string) => {
   }).then(value => {
     let results = value.results
     renderList(results, mergeResults.value)
-  })
-  indexes.forEach(value => {
-    msClient?.index('').fetchPrimaryKey().then(pk => indexInfo[value] = pk)
+    console.log(mergeResults)
+    documentList.value = mergeResults.value
   })
 
 }
@@ -296,7 +221,7 @@ const rotate = (event) => {
         :collapsed-size="screenCollapsedSize"
         collapsible
         :min-size="15"
-        :max-size="15"
+        :max-size="30"
         :class="cn(isCollapsed && 'min-w-[50px] transition-all duration-300 ease-in-out')"
         @expand="onExpand"
         @collapse="onCollapse"
