@@ -117,9 +117,9 @@ const renderColumn = (results: Array<MultiSearchResult<Record<string, any>>>, co
           let key = h(Badge, {
             variant: 'outline',
             class: 'mr-2',
-            style: 'font-size: 0.85rem; font-weight: bold'
+            style: 'font-size: 0.85rem; font-weight: bold; inline-block'
           }, () => flattedKey + ':')
-          let val = h('span', { class: 'font-medium', innerHTML: ' ' + flatted[flattedKey] + ' '})
+          let val = h('span', { class: 'font-medium', style: 'inline-block', innerHTML: ' ' + flatted[flattedKey] + ' '})
           children.push(key)
           children.push(val)
         }
@@ -177,6 +177,7 @@ const flattenObject = (obj: any, parentKey = '', result = {} as Record<string, a
   margin-bottom: 0;
   line-height: 2em;
   word-break: break-word;
+  text-overflow: ellipsis;
 }
 .dscTruncateByHeight {
   overflow: hidden;

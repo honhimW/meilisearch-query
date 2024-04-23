@@ -39,6 +39,24 @@ export default defineComponent({
     let editor: monaco.editor.IStandaloneCodeEditor
     const codeEditBox = ref()
     const init = () => {
+      monaco.editor.defineTheme('shacdn-ui-dark', {
+        base: 'vs-dark',
+        inherit: true,
+        rules: [],
+        colors: {
+          'editor.background': '#0A0B0F'
+        }
+      })
+
+      monaco.editor.defineTheme('shacdn-ui-light', {
+        base: 'vs',
+        inherit: true,
+        rules: [],
+        colors: {
+          'editor.background': '#FFFFFF'
+        }
+      })
+
       monaco.languages.typescript.javascriptDefaults.setDiagnosticsOptions({
         noSemanticValidation: true,
         noSyntaxValidation: false
@@ -51,6 +69,7 @@ export default defineComponent({
         value: props.modelValue,
         language: props.language,
         theme: props.theme,
+        wordWrap: 'on',
         ...props.options
       })
       editor.onDidChangeModelContent(() => {

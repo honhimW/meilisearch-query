@@ -23,7 +23,7 @@ defineEmits<{
 </script>
 
 <template>
-  <Select v-model="selectedIndex">
+  <Select v-model="selectedIndex" multiple>
     <SelectTrigger
       aria-label="Select index"
       :class="cn(

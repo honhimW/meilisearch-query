@@ -1,14 +1,14 @@
 <script lang="ts" setup>
-import { formatDistanceToNow } from 'date-fns'
-import type { Mail } from '../data/mails'
 import { ScrollArea } from '@/components/ui/scroll-area'
 import { cn } from '@/lib/utils'
-import { Badge } from '@/components/ui/badge'
+import { defineComponent } from 'vue'
+import ListItem from '@/views/dashboard/examples/mail/components/ListItem.vue'
 
 export interface MDocument {
   indexUid?: string
   id?: string
   doc: Record<string, any>
+  hit: Record<string, any>
 }
 
 interface IndexSettings {
@@ -17,39 +17,37 @@ interface IndexSettings {
   selectedFields: string[]
 }
 
-interface MailListProps {
-  items: Mail[]
-}
-
 defineProps<{
   documents: MDocument[]
   indexSettings: IndexSettings
 }>()
 const selectedDocument = defineModel<MDocument>('selectedDocument', { required: false })
 
-function getBadgeVariantFromLabel(label: string) {
-  if (['work'].includes(label.toLowerCase()))
-    return 'default'
+const emits = defineEmits<{
+  (e: 'click-document'): void
+}>()
 
-  if (['personal'].includes(label.toLowerCase()))
-    return 'outline'
-
-  return 'secondary'
+const onSelectedDocument = (item: MDocument) => {
+  selectedDocument.value = item
+  emits('click-document')
 }
+
+defineComponent(ListItem)
+
 </script>
 
 <template>
   <ScrollArea class="h-screen flex">
     <div class="flex-1 flex flex-col gap-2 p-4 pt-0">
       <TransitionGroup name="list" appear>
-        <button
+        <div
           v-for="item of documents"
           :key="item.id"
           :class="cn(
             'flex flex-col items-start gap-2 rounded-lg border p-3 text-left text-sm transition-all hover:bg-accent',
             selectedDocument === item && 'bg-muted',
           )"
-          @click="selectedDocument = item"
+          @click="onSelectedDocument(item)"
         >
           <div class="flex w-full flex-col gap-1">
             <div class="flex items-center">
@@ -63,16 +61,16 @@ function getBadgeVariantFromLabel(label: string) {
             <div class="text-xs font-medium">
               {{ item.id }}
             </div>
+            <ListItem :row="item.doc"></ListItem>
           </div>
-          <div class="line-clamp-2 text-xs text-muted-foreground">
-            {{ JSON.stringify(item.doc).substring(0, 300) }}
-          </div>
-<!--          <div class="flex items-center gap-2">-->
-<!--            <Badge v-for="label of item.labels" :key="label" :variant="getBadgeVariantFromLabel(label)">-->
-<!--              {{ label }}-->
-<!--            </Badge>-->
-<!--          </div>-->
-        </button>
+          <!--          <div class="line-clamp-2 text-xs text-muted-foreground">-->
+          <!--          </div>-->
+          <!--          <div class="flex items-center gap-2">-->
+          <!--            <Badge v-for="label of item.labels" :key="label" :variant="getBadgeVariantFromLabel(label)">-->
+          <!--              {{ label }}-->
+          <!--            </Badge>-->
+          <!--          </div>-->
+        </div>
       </TransitionGroup>
     </div>
   </ScrollArea>
