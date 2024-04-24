@@ -52,7 +52,7 @@ export default defineComponent({
             q: query,
             attributesToHighlight: ['*'],
             facets: [],
-            highlightPreTag: '<ais-highlight style="background-color: #ff5895">',
+            highlightPreTag: '<ais-highlight style="background-color: #ff5895; font-weight: bolder">',
             highlightPostTag: '</ais-highlight>',
             limit: 20,
             offset: 0,

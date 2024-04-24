@@ -45,7 +45,7 @@ interface IndexHolder {
 
 const props = withDefaults(defineProps<MailProps>(), {
   defaultCollapsed: false,
-  defaultLayout: () => [15, 85, 655]
+  defaultLayout: () => [15, 85, 85]
 })
 
 onMounted(() => {
@@ -112,7 +112,7 @@ const search = (query?: SearchParams | string) => {
         q: query,
         attributesToHighlight: ['*'],
         facets: [],
-        highlightPreTag: '<ais-highlight style="background-color: #ff5895">',
+        highlightPreTag: '<ais-highlight style="background-color: #ff5895; font-weight: bold">',
         highlightPostTag: '</ais-highlight>',
         limit: 20,
         offset: 0,

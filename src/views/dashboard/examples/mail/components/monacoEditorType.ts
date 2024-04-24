@@ -50,8 +50,8 @@ export const editorProps = {
         minimap: {
           enabled: true,
         },
-        readOnly: true,
-        fontSize: 16,
+        readOnly: false,
+        fontSize: 14,
         scrollBeyondLastLine: false,
         overviewRulerBorder: false,
       }

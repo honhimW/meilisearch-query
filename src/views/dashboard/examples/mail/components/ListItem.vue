@@ -30,12 +30,13 @@ const flattenObject = (obj: any, parentKey = '', result = {} as Record<string, a
   <div class="flex max-h-[200px] items-center source dscTruncateByHeight">
     <template v-for="(value, key) in flatted" :key="key">
       <Badge
+        variant="secondary"
         class="mr-2"
         style="font-size: 0.85rem; font-weight: bold;"
       >
         {{ key + ':' }}
       </Badge>
-      <span class="font-medium" style="padding-right: 7px">{{ value }}</span>
+      <span class="font-medium" style="padding-right: 7px" v-html="value"></span>
     </template>
   </div>
 </template>

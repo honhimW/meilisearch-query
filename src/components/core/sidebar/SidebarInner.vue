@@ -143,65 +143,65 @@ const toggleSidebar = () => {
               </li>
             </ul>
           </div>
-          <div class="border-b-[1px] transition-all" :class="store.sidebarExpanded ? 'p-4' : 'p-2'">
-            <p
-              v-show="store.sidebarExpanded"
-              class="uppercase text-xs font-light text-gray-400 mb-2 tracking-widest transition-all duration-300 delay-100"
-              :class="store.sidebarExpanded ? 'visible opacity-100' : 'invisible opacity-0'"
-            >
-              Misc
-            </p>
-            <ul>
-              <li class="flex items-center mb-1 rounded-md">
-                <TooltipProvider :disable-hoverable-content="true">
-                  <Tooltip :delay-duration="0">
-                    <TooltipTrigger class="w-full">
-                      <Toggle
-                        class="w-full overflow-x-hidden justify-start duration-150"
-                        @click="handleNavigate('/404-page')"
-                      >
-                        <span class="flex items-center" :class="store.sidebarExpanded ? 'mr-4' : 'm-0'">
-                          <Icon name="AlertTriangle" />
-                        </span>
-                        <transition name="fade" :duration="300">
-                          <span v-show="store.sidebarExpand">404 Page</span>
-                        </transition>
-                      </Toggle>
-                    </TooltipTrigger>
-                    <template v-if="!store.sidebarExpanded">
-                      <TooltipContent side="right">
-                        <p class="text-sm">404 Page</p>
-                      </TooltipContent>
-                    </template>
-                  </Tooltip>
-                </TooltipProvider>
-              </li>
-              <li class="flex items-center mb-1 rounded-md">
-                <TooltipProvider :disable-hoverable-content="true">
-                  <Tooltip :delay-duration="0">
-                    <TooltipTrigger class="w-full">
-                      <Toggle
-                        class="w-full overflow-x-hidden justify-start duration-150"
-                        @click="$router.push('/login')"
-                      >
-                        <span class="flex items-center" :class="store.sidebarExpanded ? 'mr-4' : 'm-0'">
-                          <Icon name="LogIn" />
-                        </span>
-                        <transition name="fade" :duration="300">
-                          <span v-show="store.sidebarExpand">Login</span>
-                        </transition>
-                      </Toggle>
-                    </TooltipTrigger>
-                    <template v-if="!store.sidebarExpanded">
-                      <TooltipContent side="right" class="bg-white">
-                        <p class="text-sm">Login</p>
-                      </TooltipContent>
-                    </template>
-                  </Tooltip>
-                </TooltipProvider>
-              </li>
-            </ul>
-          </div>
+<!--          <div class="border-b-[1px] transition-all" :class="store.sidebarExpanded ? 'p-4' : 'p-2'">-->
+<!--            <p-->
+<!--              v-show="store.sidebarExpanded"-->
+<!--              class="uppercase text-xs font-light text-gray-400 mb-2 tracking-widest transition-all duration-300 delay-100"-->
+<!--              :class="store.sidebarExpanded ? 'visible opacity-100' : 'invisible opacity-0'"-->
+<!--            >-->
+<!--              Misc-->
+<!--            </p>-->
+<!--            <ul>-->
+<!--              <li class="flex items-center mb-1 rounded-md">-->
+<!--                <TooltipProvider :disable-hoverable-content="true">-->
+<!--                  <Tooltip :delay-duration="0">-->
+<!--                    <TooltipTrigger class="w-full">-->
+<!--                      <Toggle-->
+<!--                        class="w-full overflow-x-hidden justify-start duration-150"-->
+<!--                        @click="handleNavigate('/404-page')"-->
+<!--                      >-->
+<!--                        <span class="flex items-center" :class="store.sidebarExpanded ? 'mr-4' : 'm-0'">-->
+<!--                          <Icon name="AlertTriangle" />-->
+<!--                        </span>-->
+<!--                        <transition name="fade" :duration="300">-->
+<!--                          <span v-show="store.sidebarExpand">404 Page</span>-->
+<!--                        </transition>-->
+<!--                      </Toggle>-->
+<!--                    </TooltipTrigger>-->
+<!--                    <template v-if="!store.sidebarExpanded">-->
+<!--                      <TooltipContent side="right">-->
+<!--                        <p class="text-sm">404 Page</p>-->
+<!--                      </TooltipContent>-->
+<!--                    </template>-->
+<!--                  </Tooltip>-->
+<!--                </TooltipProvider>-->
+<!--              </li>-->
+<!--              <li class="flex items-center mb-1 rounded-md">-->
+<!--                <TooltipProvider :disable-hoverable-content="true">-->
+<!--                  <Tooltip :delay-duration="0">-->
+<!--                    <TooltipTrigger class="w-full">-->
+<!--                      <Toggle-->
+<!--                        class="w-full overflow-x-hidden justify-start duration-150"-->
+<!--                        @click="$router.push('/login')"-->
+<!--                      >-->
+<!--                        <span class="flex items-center" :class="store.sidebarExpanded ? 'mr-4' : 'm-0'">-->
+<!--                          <Icon name="LogIn" />-->
+<!--                        </span>-->
+<!--                        <transition name="fade" :duration="300">-->
+<!--                          <span v-show="store.sidebarExpand">Login</span>-->
+<!--                        </transition>-->
+<!--                      </Toggle>-->
+<!--                    </TooltipTrigger>-->
+<!--                    <template v-if="!store.sidebarExpanded">-->
+<!--                      <TooltipContent side="right" class="bg-white">-->
+<!--                        <p class="text-sm">Login</p>-->
+<!--                      </TooltipContent>-->
+<!--                    </template>-->
+<!--                  </Tooltip>-->
+<!--                </TooltipProvider>-->
+<!--              </li>-->
+<!--            </ul>-->
+<!--          </div>-->
         </ScrollArea>
       </div>
 

@@ -1,5 +1,5 @@
 <template>
-  <div ref="codeEditBox" class="codeEditBox"></div>
+  <div ref="codeEditBox" class="codeEditBox s_ipt" id="kw"></div>
 </template>
 <script lang="ts">
 import { defineComponent, onBeforeUnmount, onMounted, ref, watch } from 'vue'
@@ -12,6 +12,7 @@ import EditorWorker from 'monaco-editor/esm/vs/editor/editor.worker?worker'
 import * as monaco from 'monaco-editor'
 import { editor } from 'monaco-editor'
 import IEditorOptions = editor.IEditorOptions
+import IStandaloneCodeEditor = editor.IStandaloneCodeEditor
 
 export default defineComponent({
   name: 'monacoEditor',
@@ -57,6 +58,14 @@ export default defineComponent({
         }
       })
 
+      monaco.editor.addKeybindingRules([
+        {
+          keybinding: monaco.KeyMod.CtrlCmd | monaco.KeyCode.KeyD,
+          command: 'editor.action.deleteLines',
+          when: 'editorTextFocus',
+        }
+      ])
+
       monaco.languages.typescript.javascriptDefaults.setDiagnosticsOptions({
         noSemanticValidation: true,
         noSyntaxValidation: false
@@ -77,6 +86,7 @@ export default defineComponent({
         emit('update:modelValue', value)
         emit('change', value)
       })
+      addKeyBindings(editor)
       emit('editor-mounted', editor)
     }
     watch(
@@ -129,6 +139,53 @@ export default defineComponent({
     return { codeEditBox }
   }
 })
+
+const addKeyBindings = (editor: IStandaloneCodeEditor) => {
+  monaco.editor.addKeybindingRules([
+    {
+      keybinding: monaco.KeyMod.Alt | monaco.KeyMod.CtrlCmd | monaco.KeyCode.DownArrow,
+      command: 'editor.action.copyLinesDownAction',
+      when: 'editorTextFocus && !editorReadonly',
+    },
+    {
+      keybinding: monaco.KeyMod.Alt | monaco.KeyMod.CtrlCmd | monaco.KeyCode.UpArrow,
+      command: 'editor.action.copyLinesUpAction',
+      when: 'editorTextFocus && !editorReadonly',
+    },
+    {
+      keybinding: monaco.KeyMod.Alt | monaco.KeyCode.DownArrow,
+      command: 'editor.action.moveLinesDownAction',
+      when: 'editorTextFocus && !editorReadonly',
+    },
+    {
+      keybinding: monaco.KeyMod.Alt | monaco.KeyCode.UpArrow,
+      command: 'editor.action.moveLinesUpAction',
+      when: 'editorTextFocus && !editorReadonly',
+    },
+    {
+      keybinding: monaco.KeyMod.CtrlCmd | monaco.KeyCode.KeyD,
+      command: 'editor.action.deleteLines',
+      when: 'editorTextFocus && !editorReadonly',
+    },
+    {
+      keybinding: monaco.KeyMod.Alt | monaco.KeyCode.Minus,
+      command: 'editor.fold',
+      when: 'editorFocus',
+    },
+    {
+      keybinding: monaco.KeyMod.Alt | monaco.KeyCode.Equal,
+      command: 'editor.unfold',
+      when: 'editorFocus',
+    },
+  ])
+  editor.addCommand(monaco.KeyMod.CtrlCmd | monaco.KeyMod.Shift | monaco.KeyCode.KeyF, args => {
+    let value = editor.getValue()
+    let parse = JSON.parse(value)
+    let newValue = JSON.stringify(parse, null, 2)
+    editor.setValue(newValue)
+  }, 'editorTextFocus && !editorReadonly')
+}
+
 </script>
 <style lang="scss" scoped>
 .codeEditBox {

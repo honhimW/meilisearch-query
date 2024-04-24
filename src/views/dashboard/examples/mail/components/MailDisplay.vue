@@ -229,7 +229,7 @@ const today = new Date()
       <Separator />
       <MonacoEditor
         :theme="monacoTheme"
-        :model-value="JSON.stringify(doc.doc, null, 2)"
+        :model-value="JSON.stringify(doc.hit, null, 2)"
         language="json"
         class="max-w-[100%]"
       />
