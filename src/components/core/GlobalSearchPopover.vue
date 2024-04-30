@@ -85,7 +85,6 @@ onUnmounted(() => {
         id="globalSearchInput"
         v-model="search"
         placeholder="Search..."
-        prepend-icon="Search"
         class="w-full global-search__input"
         @focus="handleFocus"
         @blur="handleFocus"
@@ -106,7 +105,9 @@ onUnmounted(() => {
             @click="handleClick(menu.path)"
           >
             <div class="rounded-md bg-violet-100 dark:bg-muted w-12 h-12 flex items-center justify-center mr-4">
-              <span class="text-violet-500 dark:text-foreground flex items-center"><Icon :name="menu.icon" /></span>
+              <span class="text-violet-500 dark:text-foreground flex items-center">
+                <Icon :name="menu.icon" />
+              </span>
             </div>
             <div>
               <p class="font-medium">{{ menu.title }}</p>

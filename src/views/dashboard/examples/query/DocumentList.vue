@@ -2,13 +2,15 @@
 import { ScrollArea } from '@/components/ui/scroll-area'
 import { cn } from '@/lib/utils'
 import { defineComponent } from 'vue'
-import ListItem from '@/views/dashboard/examples/mail/components/ListItem.vue'
+import ListItem from '@/views/dashboard/examples/query/ListItem.vue'
+import type { Attribute, ScreenProps } from '@/views/dashboard/examples/query/Screen.vue'
 
 export interface MDocument {
   indexUid?: string
   id?: string
   doc: Record<string, any>
   hit: Record<string, any>
+  attributes?: ScreenProps
 }
 
 interface IndexSettings {
@@ -50,26 +52,19 @@ defineComponent(ListItem)
           @click="onSelectedDocument(item)"
         >
           <div class="flex w-full flex-col gap-1">
-            <div class="flex items-center">
-              <div class="flex items-center gap-2">
-                <div class="font-semibold">
-                  {{ item.indexUid }}
-                </div>
-              </div>
-            </div>
+<!--            <div class="flex items-center">-->
+<!--              <div class="flex items-center gap-2">-->
+<!--                <div class="font-semibold">-->
+<!--                  {{ item.indexUid }}-->
+<!--                </div>-->
+<!--              </div>-->
+<!--            </div>-->
 
             <div class="text-xs font-medium">
               {{ item.id }}
             </div>
-            <ListItem :row="item.doc"></ListItem>
+            <ListItem :row="item.doc" :attributes="item.attributes"></ListItem>
           </div>
-          <!--          <div class="line-clamp-2 text-xs text-muted-foreground">-->
-          <!--          </div>-->
-          <!--          <div class="flex items-center gap-2">-->
-          <!--            <Badge v-for="label of item.labels" :key="label" :variant="getBadgeVariantFromLabel(label)">-->
-          <!--              {{ label }}-->
-          <!--            </Badge>-->
-          <!--          </div>-->
         </div>
       </TransitionGroup>
     </div>

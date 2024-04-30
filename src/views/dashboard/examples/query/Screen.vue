@@ -48,6 +48,18 @@ const emits = defineEmits<{
   (e: 'updateFields', payload: ScreenProps): void
 }>()
 
+const plus = (attr: Attribute) => {
+  unselectedRef.value.splice(unselectedRef.value.indexOf(attr), 1)
+  selectedRef.value.push(attr)
+  onEnd(undefined)
+}
+
+const minus = (attr: Attribute) => {
+  selectedRef.value.splice(selectedRef.value.indexOf(attr), 1)
+  unselectedRef.value.splice(0, 0, attr)
+  onEnd(undefined)
+}
+
 </script>
 
 <template>
@@ -92,6 +104,9 @@ const emits = defineEmits<{
             'justify-start',
           )"
         >
+          <div @click="minus(element)">
+            <Icon icon="lucide:square-minus" class="mr-2 size-4" />
+          </div>
           <Icon icon="lucide:menu" class="handle mr-2 size-4 draggable-component" />
           <!--          <Icon :icon="link.icon" class="mr-2 size-4" />-->
           {{ element.title }}
@@ -136,6 +151,9 @@ const emits = defineEmits<{
             'justify-start',
           )"
         >
+          <div @click="plus(element)">
+            <Icon icon="lucide:square-plus" class="mr-2 size-3.5" />
+          </div>
           <Icon icon="lucide:menu" class="handle mr-2 size-4 draggable-component" />
           <!--          <Icon :icon="link.icon" class="mr-2 size-4" />-->
           {{ element.title }}

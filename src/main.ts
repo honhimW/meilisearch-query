@@ -2,9 +2,9 @@ import './assets/css/main.css';
 
 import { createApp } from 'vue'
 import { createPinia } from 'pinia'
-import VueFeather from 'vue-feather';
-import PageHeaderVue from './components/ui/PageHeader.vue';
-import Icon from '@/components/ui/Icon.vue';
+import VueFeather from 'vue-feather'
+import PageHeaderVue from './components/ui/PageHeader.vue'
+import Icon from '@/components/ui/Icon.vue'
 
 import App from './App.vue'
 import router from './router'
@@ -18,10 +18,8 @@ app.component('Icon', Icon);
 app.use(createPinia())
 app.use(router)
 
-const msClient = new MeiliSearch({
-  host: 'http://10.37.1.132:7700',
-  apiKey: 'MASTER_KEY',
-})
-app.provide('msClient', msClient)
-
 app.mount('#app')
+
+declare global {
+  interface Window { msClient: MeiliSearch }
+}

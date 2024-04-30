@@ -36,8 +36,7 @@ const onKeydown = (e: KeyboardEvent) => {
 };
 </script>
 
-<template>
-  <div class="relative">
+<template class="relative">
     <Icon v-if="prependIcon" :name="prependIcon" class="text-slate-500 absolute h-4 top-1/2 -translate-y-1/2 left-4"></Icon>
     <input
       :class="[
@@ -50,5 +49,4 @@ const onKeydown = (e: KeyboardEvent) => {
       @blur="onBlur"
       @keydown="onKeydown"
     >
-  </div>
 </template>

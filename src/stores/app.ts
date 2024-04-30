@@ -1,4 +1,5 @@
 import { defineStore } from 'pinia';
+import { MeiliSearch } from 'meilisearch'
 
 interface IAppStore {
   themeMode: 'light' | 'dark'
@@ -6,6 +7,9 @@ interface IAppStore {
   wrapperWidth: number | string
   wrapperLeftOffset: number | string
   navWidth: number | string
+  showDialog: boolean
+  serverUrl: string | undefined
+  apiKey: string | undefined
 }
 
 const LIGHT = 'light';
@@ -14,13 +18,19 @@ const THEME_KEY = 'themeMode';
 const EXPAND = 280;
 const SHRINKED = 72;
 
+const SERVER_URL_KEY = 'meiliServer'
+const SERVER_API_KEY_KEY = 'apiKey'
+
 export const useAppStore = defineStore('app', {
   state: () => <IAppStore>({
     themeMode: LIGHT,
     sidebarExpand: false,
     wrapperWidth: 0,
     wrapperLeftOffset: 0,
-    navWidth: '100%'
+    navWidth: '100%',
+    showDialog: false,
+    serverUrl: undefined,
+    apiKey: undefined,
   }),
   getters: {
     theme: (state) => state.themeMode,
@@ -28,6 +38,10 @@ export const useAppStore = defineStore('app', {
     sidebarExpanded: (state) => state.sidebarExpand,
   },
   actions: {
+    toggleDialog(show: boolean) {
+      this.showDialog = !this.showDialog
+      console.log(this.showDialog)
+    },
     toggleSidebar() {
       this.sidebarExpand = !this.sidebarExpand;
       if (window.innerWidth > 1024) {
@@ -59,6 +73,41 @@ export const useAppStore = defineStore('app', {
       window.addEventListener('resize', this.initWrapper);
       this.applyTheme();
       this.initWrapper();
+    },
+    setServerUrl(url: string | undefined) {
+      this.serverUrl = url
+      if (this.serverUrl) {
+        localStorage.setItem(SERVER_URL_KEY, this.serverUrl)
+      } else {
+        localStorage.removeItem(SERVER_URL_KEY)
+      }
+    },
+    setApiKey(apiKey: string | undefined) {
+      this.apiKey = apiKey
+      if (this.apiKey) {
+        localStorage.setItem(SERVER_API_KEY_KEY, this.apiKey)
+      } else {
+        localStorage.removeItem(SERVER_API_KEY_KEY)
+      }
+    },
+    initClient() {
+      const url = localStorage.getItem(SERVER_URL_KEY);
+      const apiKey = localStorage.getItem(SERVER_API_KEY_KEY);
+      if (url) {
+        this.serverUrl = url;
+      }
+      if (apiKey) {
+        this.apiKey = apiKey
+      }
+      this.buildClient()
+    },
+    buildClient() {
+      if (this.serverUrl) {
+        window.msClient = new MeiliSearch({
+          host: this.serverUrl,
+          apiKey: this.apiKey
+        })
+      }
     },
     toggleTheme() {
       this.themeMode = this.themeMode === LIGHT ? DARK : LIGHT;

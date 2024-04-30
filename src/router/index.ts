@@ -10,7 +10,7 @@ const router = createRouter({
   routes: [
     {
       path: '/',
-      redirect: '/dashboard/home',
+      redirect: '/dashboard/query',
     },
     {
       path: '/login',
@@ -23,7 +23,7 @@ const router = createRouter({
     {
       path: '/dashboard',
       component: DashboardLayoutVue,
-      redirect: '/dashboard/home',
+      redirect: '/dashboard/query',
       meta: {
         title: 'Dashboard',
       },
@@ -45,17 +45,9 @@ const router = createRouter({
           } as RouteMeta & IRouteMeta
         },
         {
-          path: 'mails',
-          name: 'mail_index',
-          component: () => import('@/views/dashboard/examples/mail/Mails.vue'),
-          meta: {
-            title: 'Mail',
-          } as RouteMeta & IRouteMeta
-        },
-        {
           path: 'query',
           name: 'query_index',
-          component: () => import('@/views/dashboard/examples/query/Index.vue'),
+          component: () => import('@/views/dashboard/examples/query/DocumentDashboard.vue'),
           meta: {
             title: 'Query',
           } as RouteMeta & IRouteMeta

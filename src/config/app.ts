@@ -13,17 +13,17 @@ export const APP_MENU: Record<string, { name: string, routes: IDashboardMenus[] 
     name: 'Core',
     routes: [
       {
-        title: 'Mails',
-        icon: 'TextSearch',
-        path: 'mails',
-        description: 'Manage Mails'
-      },
-      {
-        path: 'query',
         title: 'Query',
-        icon: 'Search',
-        description: 'Query'
+        icon: 'TextSearch',
+        path: 'query',
+        description: 'Query documents'
       },
+      // {
+      //   path: 'query',
+      //   title: 'Query',
+      //   icon: 'Search',
+      //   description: 'Query'
+      // },
     ],
   },
   settings: {

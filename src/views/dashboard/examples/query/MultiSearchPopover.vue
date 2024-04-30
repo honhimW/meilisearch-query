@@ -11,6 +11,7 @@ import type { SearchParams } from 'meilisearch/src/types/types'
 
 const props = defineProps<{
   q: string
+  dsl: string
 }>()
 const emits = defineEmits<{
   (e: 'performSearch', payload?: SearchParams | string): void
@@ -168,7 +169,7 @@ onUnmounted(() => {
     </PopoverTrigger>
     <PopoverContent class="mt-2 w-[500px] h-96 custom_scroll">
       <div class="py-4">
-        <h4 class="font-semibold mb-2 text-lg">Searchable attributes</h4>
+        <h4 class="font-semibold mb-2 text-sm">Searchable attributes</h4>
         <ul>
           <li
             v-for="(menu, i) in searchList"
@@ -179,7 +180,7 @@ onUnmounted(() => {
             ]"
             @click="handleClick(menu.value)"
           >
-            <div class="rounded-md bg-violet-100 dark:bg-muted w-12 h-12 flex items-center justify-center mr-4">
+            <div class="rounded-md bg-violet-100 dark:bg-muted w-10 h-10 flex items-center justify-center mr-2">
               <span class="text-violet-500 dark:text-foreground flex items-center"><Icon :name="menu.icon" /></span>
             </div>
             <div>

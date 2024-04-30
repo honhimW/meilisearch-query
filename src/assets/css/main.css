@@ -43,7 +43,7 @@ input:active, input:focus, input:blur {
   background-color: transparent;
 }
 .custom_scroll::-webkit-scrollbar-thumb {
-  background: #999999; 
+  background: #999999;
   border-radius: 10px;
 }
 

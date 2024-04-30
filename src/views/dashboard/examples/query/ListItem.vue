@@ -1,16 +1,40 @@
 <script lang="ts" setup>
 import { computed, defineComponent } from 'vue'
 import { Badge } from '@/components/ui/badge'
-import { Button } from '@/components/ui/button'
+import type { Attribute, ScreenProps } from '@/views/dashboard/examples/query/Screen.vue'
 
 defineComponent(Badge)
 
 const props = defineProps<{
   row: Record<string, any>
+  attributes?: ScreenProps
 }>()
 
 const flatted = computed(() => {
-  return flattenObject(props.row)
+  let selected = props.attributes?.selected ?? []
+  let unselected = props.attributes?.unselected ?? []
+  let _flattenObject = flattenObject(props.row)
+  let map = new Map<string, any>()
+  if (selected.length > 0) {
+    let selectedKeys = selected.map(_a => _a.title)
+    for (let i = 0; i < selectedKeys.length; i++) {
+      let key = selectedKeys[i]
+      let flattenObjectElement = _flattenObject[key]
+      if (flattenObjectElement) {
+        map.set(key, flattenObjectElement)
+      }
+    }
+  } else {
+    let unSelectedKeys = unselected.map(_a => _a.title)
+    for (let i = 0; i < unSelectedKeys.length; i++) {
+      let key = unSelectedKeys[i]
+      let flattenObjectElement = _flattenObject[key]
+      if (flattenObjectElement) {
+        map.set(key, flattenObjectElement)
+      }
+    }
+  }
+  return map
 })
 
 const flattenObject = (obj: any, parentKey = '', result = {} as Record<string, any>) => {
@@ -28,38 +52,46 @@ const flattenObject = (obj: any, parentKey = '', result = {} as Record<string, a
 
 <template>
   <div class="flex max-h-[200px] items-center source dscTruncateByHeight">
-    <template v-for="(value, key) in flatted" :key="key">
+    <template v-for="(value, index) of flatted" :key="index">
       <Badge
         variant="secondary"
         class="mr-2"
         style="font-size: 0.85rem; font-weight: bold;"
       >
-        {{ key + ':' }}
+        {{ value[0] + ':' }}
       </Badge>
-      <span class="font-medium" style="padding-right: 7px" v-html="value"></span>
+      <span class="font-medium" style="padding-right: 7px" v-html="value[1]"></span>
     </template>
   </div>
 </template>
 
 <style scoped>
-.max-h-[200px] {
-  max-height: 200px;
+.max-h-[
+
+200
+px
+
+]
+{
+  max-height: 200px
+;
 }
 .items-center {
   align-items: center;
 }
+
 .source {
   margin-bottom: 0;
   line-height: 2em;
   word-break: break-word;
 }
+
 .dscTruncateByHeight {
   overflow: hidden;
   display: inline-block;
   max-height: 115px;
-  //overflow-y: auto;
-  //scrollbar-width: none;
 }
+
 span:hover {
   text-decoration: underline;
 }
