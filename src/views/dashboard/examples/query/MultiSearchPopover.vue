@@ -120,8 +120,14 @@ const onKeyDown = (e: KeyboardEvent) => {
     if (e.key === 'Enter') {
       const current = searchList.value[activeIndex.value]
       isFocused.value = false
-      // todo: apply search
       emits('performSearch', search.value)
+      let query = {
+        ...router.currentRoute.value.query,
+        q: search.value,
+      }
+      router.push({
+        query: query
+      })
     }
   }
 }
@@ -144,6 +150,12 @@ const handleGlobalSearchTrigger = (e: KeyboardEvent) => {
 
 onMounted(() => {
   window.addEventListener('keydown', handleGlobalSearchTrigger)
+  let query = router.currentRoute.value.query
+  let _q = query['q']
+  if (_q !== undefined) {
+    search.value = _q as string
+  }
+  emits('performSearch', search.value)
 })
 
 onUnmounted(() => {

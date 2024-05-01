@@ -56,8 +56,8 @@ const toggleMode = () => {
       </Button>
       <div class="border-x-[1px] border-gray-300 h-[24px] w-[1px] mx-2"></div>
       <Button variant="outline" class="border-0 p-[6px] w-8 h-8" @click="store.toggleDialog(true)">
-        <Zap v-if="store.serverUrl" />
-        <ZapOff v-else />
+        <Zap v-if="store.serverUrl" style="color: deeppink"/>
+        <ZapOff v-else style="color: darkred"/>
       </Button>
       <!--      <div class="border-x-[1px] border-gray-300 h-[24px] w-[1px] mx-2"></div>-->
       <!--      <DropdownMenu>-->

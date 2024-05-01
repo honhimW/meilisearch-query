@@ -17,6 +17,7 @@ import { type Hit, type MultiSearchResult, type Settings } from 'meilisearch'
 import { RotateCw } from 'lucide-vue-next'
 import { Button } from '@/components/ui/button'
 import MonacoEditor from '@/views/dashboard/examples/query/MonacoEditor.vue'
+import router from '@/router'
 
 interface Mail {
   id: string
@@ -99,34 +100,35 @@ const search = (query?: SearchParams | string, page = 0) => {
 
   results.value.length = 0
   mergeResults.value.length = 0
-  let queries: MultiSearchQuery[] = indexes.value
-    .filter(value => value.uid === selectedIndex.value)
-    .map(value => {
-      if (typeof query == 'string') {
-        return {
-          indexUid: value.uid,
-          q: query,
-          attributesToHighlight: ['*'],
-          facets: [],
-          highlightPreTag: '<ais-highlight style="background-color: #ff5895; font-weight: bold">',
-          highlightPostTag: '</ais-highlight>',
-          limit: limit,
-          offset: offset
-        }
-      } else {
-        return {
-          indexUid: value,
-          ...query as SearchParams
-        }
+  let index = router.currentRoute.value.query?._index
+  if (index) {
+    let _searchQuery: MultiSearchQuery
+    if (typeof query == 'string') {
+      _searchQuery = {
+        indexUid: index as string,
+        q: query,
+        attributesToHighlight: ['*'],
+        facets: [],
+        highlightPreTag: '<ais-highlight style="background-color: #ff5895; font-weight: bold">',
+        highlightPostTag: '</ais-highlight>',
+        limit: limit,
+        offset: offset
       }
+    } else {
+      _searchQuery = {
+        indexUid: index as string,
+        ...query as SearchParams
+      }
+    }
+    window.msClient?.multiSearch()
+    window.msClient?.multiSearch({
+      queries: [_searchQuery],
+    }).then(value => {
+      let results = value.results
+      renderList(results, mergeResults.value, page == 0)
+      documentList.value = mergeResults.value
     })
-  window.msClient?.multiSearch({
-    queries
-  }).then(value => {
-    let results = value.results
-    renderList(results, mergeResults.value, page == 0)
-    documentList.value = mergeResults.value
-  })
+  }
 
 }
 

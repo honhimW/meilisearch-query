@@ -31,6 +31,7 @@ import { ToggleGroup, ToggleGroupItem } from '@/components/ui/toggle-group'
 import type { MDocument } from '@/views/dashboard/examples/query/DocumentList.vue'
 import MonacoEditor from '@/views/dashboard/examples/query/MonacoEditor.vue'
 import { ThemeChangeEvent } from '@/stores/app'
+import ItemTable from '@/views/dashboard/examples/query/ItemTable.vue'
 
 interface MailDisplayProps {
   mail: Mail | undefined
@@ -240,6 +241,11 @@ const displayType = ref('json')
           :theme="monacoTheme"
           :model-value="JSON.stringify(doc.hit, null, 2)"
           language="json"
+          class="max-w-[100%]"
+        />
+        <ItemTable
+          v-if="displayType === 'html'"
+          :row="doc.hit"
           class="max-w-[100%]"
         />
         <!--      <div class="flex-1 whitespace-pre-wrap p-4 text-sm">-->

@@ -2,8 +2,7 @@
 import { computed, defineComponent } from 'vue'
 import { Badge } from '@/components/ui/badge'
 import type { Attribute, ScreenProps } from '@/views/dashboard/examples/query/Screen.vue'
-
-defineComponent(Badge)
+import router from '@/router'
 
 const props = defineProps<{
   row: Record<string, any>
@@ -66,16 +65,6 @@ const flattenObject = (obj: any, parentKey = '', result = {} as Record<string, a
 </template>
 
 <style scoped>
-.max-h-[
-
-200
-px
-
-]
-{
-  max-height: 200px
-;
-}
 .items-center {
   align-items: center;
 }
