@@ -35,6 +35,12 @@ export const APP_MENU: Record<string, { name: string, routes: IDashboardMenus[] 
         icon: 'Settings2',
         description: 'Settings'
       },
+      {
+        path: 'task',
+        title: 'Tasks',
+        icon: 'Tasks',
+        description: 'Tasks'
+      },
     ],
   },
 };

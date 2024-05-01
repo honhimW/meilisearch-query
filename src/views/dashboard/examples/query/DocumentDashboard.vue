@@ -1,5 +1,5 @@
 <script lang="ts" setup>
-import { computed, onMounted, ref } from 'vue'
+import { computed, onMounted, ref, watch } from 'vue'
 import { refDebounced } from '@vueuse/core'
 import IndexSwitcher from './IndexSwitcher.vue'
 import MailList from './DocumentList.vue'
@@ -11,6 +11,7 @@ import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs'
 import { ResizableHandle, ResizablePanel, ResizablePanelGroup } from '@/components/ui/resizable'
 import type { MDocument } from '@/views/dashboard/examples/query/DocumentList.vue'
 import MultiSearchPopover from '@/views/dashboard/examples/query/MultiSearchPopover.vue'
+import MultiSearchPopover2 from '@/views/dashboard/examples/query/MultiSearchPopover2.vue'
 import type { MultiSearchQuery, SearchParams } from 'meilisearch/src/types/types'
 import { type Hit, type MultiSearchResult, type Settings } from 'meilisearch'
 import { RotateCw } from 'lucide-vue-next'
@@ -136,6 +137,18 @@ interface IndexInfo {
 
 const indexInfo: Record<string, string> = {}
 
+const flattenObject = (obj: any, parentKey = '', result = {} as Record<string, any>) => {
+  for (let key in obj) {
+    let newKey = parentKey ? `${parentKey}.${key}` : `${key}`
+    if (typeof obj[key] === 'object' && obj[key] !== null) {
+      flattenObject(obj[key], newKey, result)
+    } else {
+      result[newKey] = obj[key]
+    }
+  }
+  return result
+}
+
 const renderList = (results: Array<MultiSearchResult<Record<string, any>>>, mergeResults: Array<MDocument>, reset = false) => {
   let selected = screenAttributes.value.selected.map(_a => _a.title)
   if (reset) {
@@ -148,6 +161,7 @@ const renderList = (results: Array<MultiSearchResult<Record<string, any>>>, merg
     let _hits = value.hits
     _hits.forEach(hit => {
       let _doc: Record<string, any> = hit._formatted as Record<string, any>
+      _doc = flattenObject(_doc)
       for (let key in _doc) {
         let attribute: Attribute = {
           title: key,
@@ -221,7 +235,11 @@ const rotate = (event) => {
     <ResizablePanelGroup
       id="resize-panel-group-1"
       direction="horizontal"
-      class="h-full max-h-[800px] items-stretch"
+      :class="cn(
+        'h-full',
+        'items-stretch',
+        'max-h-[800px]',
+      )"
     >
       <ResizablePanel
         id="resize-panel-1"
@@ -274,12 +292,12 @@ const rotate = (event) => {
 
                 <!--                <Search class="absolute left-2 top-2.5 size-4 text-muted-foreground" />-->
                 <!--                <Input v-model="searchValue" placeholder="Search" class="pl-8"/>-->
-<!--                <MultiSearchPopover q="http" @performSearch="search" />-->
-                <MultiSearchPopover2 q="http" />
+                <MultiSearchPopover q="http" @performSearch="search" />
+<!--                <MultiSearchPopover2 q="http" @performSearch="search" />-->
               </div>
             </form>
           </div>
-
+          <Separator />
           <TabsContent value="all" class="m-0">
             <MailList v-model:selected-document="selectedDocument"
                       :documents="documentList"

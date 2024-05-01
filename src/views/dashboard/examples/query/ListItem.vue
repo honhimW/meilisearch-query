@@ -58,7 +58,7 @@ const flattenObject = (obj: any, parentKey = '', result = {} as Record<string, a
         class="mr-2"
         style="font-size: 0.85rem; font-weight: bold;"
       >
-        {{ value[0] + ':' }}
+        {{ '/' + value[0].replace('.', '/') + ':' }}
       </Badge>
       <span class="font-medium" style="padding-right: 7px" v-html="value[1]"></span>
     </template>
