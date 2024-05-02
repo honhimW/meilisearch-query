@@ -1,5 +1,5 @@
 <template>
-  <div ref="codeEditBox" class="codeEditBox s_ipt" id="kw"></div>
+  <div ref="codeEditBox" class="codeEditBox s_ipt" ></div>
 </template>
 <script lang="ts">
 import { defineComponent, onBeforeUnmount, onMounted, ref, watch } from 'vue'

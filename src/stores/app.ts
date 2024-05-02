@@ -1,5 +1,6 @@
 import { defineStore } from 'pinia';
 import { MeiliSearch } from 'meilisearch'
+import router from '@/router'
 
 interface IAppStore {
   themeMode: 'light' | 'dark'
@@ -126,6 +127,29 @@ export const useAppStore = defineStore('app', {
     },
   },
 });
+
+export const updateQueries = (key: string, updater: (oldValue: string | undefined) => string) => {
+  const query = router.currentRoute.value.query
+  const queryElement = query[key]
+  const newValue = updater(queryElement as string)
+  const newQueries = {
+    ...query,
+  }
+  console.log(newQueries)
+  newQueries[key] = newValue
+  router.push({
+    query: newQueries
+  })
+}
+
+export const getQuery = (key: string) : string | undefined => {
+  const query = router.currentRoute.value.query
+  const queryElement = query[key]
+  if (queryElement) {
+    return queryElement as string
+  }
+  return undefined
+}
 
 export class ThemeChangeEvent extends Event {
   theme: string;

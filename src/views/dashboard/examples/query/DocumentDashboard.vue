@@ -1,9 +1,8 @@
 <script lang="ts" setup>
-import { computed, onMounted, ref, watch } from 'vue'
+import { computed, onMounted, ref } from 'vue'
 import { refDebounced } from '@vueuse/core'
 import IndexSwitcher from './IndexSwitcher.vue'
-import MailList from './DocumentList.vue'
-import MailDisplay from './DocumentDisplay.vue'
+import DocumentList from './DocumentList.vue'
 import Screen, { type Attribute, type ScreenProps } from './Screen.vue'
 import { cn } from '@/lib/utils'
 import { Separator } from '@/components/ui/separator'
@@ -11,30 +10,18 @@ import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs'
 import { ResizableHandle, ResizablePanel, ResizablePanelGroup } from '@/components/ui/resizable'
 import type { MDocument } from '@/views/dashboard/examples/query/DocumentList.vue'
 import MultiSearchPopover from '@/views/dashboard/examples/query/MultiSearchPopover.vue'
-import MultiSearchPopover2 from '@/views/dashboard/examples/query/MultiSearchPopover2.vue'
 import type { MultiSearchQuery, SearchParams } from 'meilisearch/src/types/types'
 import { type Hit, type MultiSearchResult, type Settings } from 'meilisearch'
 import { RotateCw } from 'lucide-vue-next'
 import { Button } from '@/components/ui/button'
+import { getQuery } from '@/stores/app'
+import DocumentDisplay from '@/views/dashboard/examples/query/DocumentDisplay.vue'
+import MultiSearchPopover2 from '@/views/dashboard/examples/query/MultiSearchPopover2.vue'
 import MonacoEditor from '@/views/dashboard/examples/query/MonacoEditor.vue'
-import router from '@/router'
-
-interface Mail {
-  id: string
-  name: string
-  email: string
-  indexUid: string
-  document: string
-  doc: Record<string, any>
-  date: string
-  read: boolean
-  labels: string[]
-}
 
 interface MailProps {
   defaultLayout?: number[]
   defaultCollapsed?: boolean
-  screenCollapsedSize: number
 }
 
 interface IndexHolder {
@@ -85,7 +72,7 @@ const selectedIndex = ref<string | undefined>(indexes?.value[0]?.uid)
 const searchValue = ref('')
 const debouncedSearch = refDebounced(searchValue, 250)
 
-const documentList = ref<MDocument[]>([])
+const mDocumentList = ref<MDocument[]>([])
 
 const selectedDocument = ref<MDocument | undefined>(undefined)
 
@@ -100,7 +87,7 @@ const search = (query?: SearchParams | string, page = 0) => {
 
   results.value.length = 0
   mergeResults.value.length = 0
-  let index = router.currentRoute.value.query?._index
+  let index = getQuery('_index')
   if (index) {
     let _searchQuery: MultiSearchQuery
     if (typeof query == 'string') {
@@ -120,13 +107,12 @@ const search = (query?: SearchParams | string, page = 0) => {
         ...query as SearchParams
       }
     }
-    window.msClient?.multiSearch()
     window.msClient?.multiSearch({
       queries: [_searchQuery],
     }).then(value => {
       let results = value.results
       renderList(results, mergeResults.value, page == 0)
-      documentList.value = mergeResults.value
+      mDocumentList.value = mergeResults.value
     })
   }
 
@@ -246,7 +232,6 @@ const rotate = (event) => {
       <ResizablePanel
         id="resize-panel-1"
         :default-size="defaultLayout[0]"
-        :collapsed-size="screenCollapsedSize"
         collapsible
         :min-size="15"
         :max-size="30"
@@ -274,35 +259,44 @@ const rotate = (event) => {
       <ResizableHandle id="resize-handle-1" with-handle />
       <ResizablePanel id="resize-panel-2" :default-size="defaultLayout[1]" :min-size="30">
         <Tabs default-value="all">
-          <div class="flex items-center px-4 py-2">
-            <h1 class="text-xl font-bold">
-              Result
-            </h1>
-            <TabsList class="ml-auto">
-              <TabsTrigger value="all" class="text-zinc-600 dark:text-zinc-200">
-                Struct
-              </TabsTrigger>
-              <TabsTrigger value="unread" class="text-zinc-600 dark:text-zinc-200">
-                Plain
-              </TabsTrigger>
-            </TabsList>
-          </div>
-          <Separator />
-          <div class="bg-background/95 p-4 backdrop-blur supports-[backdrop-filter]:bg-background/60">
-            <form>
+<!--          <div class="flex items-center px-4 py-2">-->
+<!--            <h1 class="text-xl font-bold">-->
+<!--              Result-->
+<!--            </h1>-->
+<!--            <TabsList class="ml-auto">-->
+<!--              <TabsTrigger value="all" class="text-zinc-600 dark:text-zinc-200">-->
+<!--                Struct-->
+<!--              </TabsTrigger>-->
+<!--              <TabsTrigger value="unread" class="text-zinc-600 dark:text-zinc-200">-->
+<!--                Plain-->
+<!--              </TabsTrigger>-->
+<!--            </TabsList>-->
+<!--          </div>-->
+<!--          <Separator />-->
+          <div class="p-2">
               <div class="relative">
-
-                <!--                <Search class="absolute left-2 top-2.5 size-4 text-muted-foreground" />-->
-                <!--                <Input v-model="searchValue" placeholder="Search" class="pl-8"/>-->
-                <MultiSearchPopover q="http" @performSearch="search" />
-<!--                <MultiSearchPopover2 q="http" @performSearch="search" />-->
+                <MultiSearchPopover2 q="" @performSearch="search" />
               </div>
-            </form>
           </div>
           <Separator />
-          <TabsContent value="all" class="m-0">
-            <MailList v-model:selected-document="selectedDocument"
-                      :documents="documentList"
+          <div class="flex items-start p-4">
+            <div class="flex items-start gap-4 text-sm">
+              <div class="grid gap-1">
+                <div class="font-semibold">
+                  Hits: {{1000}}
+                </div>
+              </div>
+              <div class="grid gap-1">
+                <div class="font-semibold">
+                  Time spent: 2ms
+                </div>
+              </div>
+            </div>
+          </div>
+          <Separator />
+          <TabsContent value="all" class="m-0 p-4">
+            <DocumentList v-model:selected-document="selectedDocument"
+                      :documents="mDocumentList"
                       @click-document="spreadDocument = true"
             />
           </TabsContent>
@@ -310,7 +304,7 @@ const rotate = (event) => {
       </ResizablePanel>
       <ResizableHandle id="resiz-handle-2" with-handle />
       <ResizablePanel v-if="spreadDocument" id="resize-panel-3" :default-size="defaultLayout[2]">
-        <MailDisplay :doc="selectedDocumentData" @close-display="spreadDocument = false" />
+        <DocumentDisplay :doc="selectedDocumentData" @close-display="spreadDocument = false" />
       </ResizablePanel>
     </ResizablePanelGroup>
 </template>

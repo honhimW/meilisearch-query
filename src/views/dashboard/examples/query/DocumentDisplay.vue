@@ -1,23 +1,10 @@
 <script lang="ts" setup>
-import {
-  Archive,
-  ArchiveX,
-  Clock,
-  Forward,
-  PanelRightClose,
-  MoreVertical,
-  Reply,
-  Braces,
-  CodeXml,
-  ReplyAll,
-  Trash2
-} from 'lucide-vue-next'
+import { Archive, ArchiveX, Braces, Clock, CodeXml, MoreVertical, PanelRightClose, Trash2 } from 'lucide-vue-next'
 import { computed, onMounted, ref } from 'vue'
 import addDays from 'date-fns/addDays'
 import addHours from 'date-fns/addHours'
 import format from 'date-fns/format'
 import nextSaturday from 'date-fns/nextSaturday'
-import type { Mail } from '../data/mails'
 import { Calendar } from '@/components/ui/calendar'
 import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuTrigger } from '@/components/ui/dropdown-menu'
 import { Popover, PopoverContent, PopoverTrigger } from '@/components/ui/popover'
@@ -25,7 +12,6 @@ import { Button } from '@/components/ui/button'
 import { Label } from '@/components/ui/label'
 import { Separator } from '@/components/ui/separator'
 import { Switch } from '@/components/ui/switch'
-import { Textarea } from '@/components/ui/textarea'
 import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from '@/components/ui/tooltip'
 import { ToggleGroup, ToggleGroupItem } from '@/components/ui/toggle-group'
 import type { MDocument } from '@/views/dashboard/examples/query/DocumentList.vue'
@@ -34,7 +20,6 @@ import { ThemeChangeEvent } from '@/stores/app'
 import ItemTable from '@/views/dashboard/examples/query/ItemTable.vue'
 
 interface MailDisplayProps {
-  mail: Mail | undefined
   doc: MDocument | undefined
 }
 
@@ -68,7 +53,7 @@ const monacoTheme = ref(toMonacoTheme(localStorage.getItem('themeMode') as strin
 
 const today = new Date()
 
-const displayType = ref('json')
+const displayType = ref('html')
 
 </script>
 
@@ -187,21 +172,21 @@ const displayType = ref('json')
             </Tooltip>
           </ToggleGroup>
         </div>
-        <Separator orientation="vertical" class="mx-2 h-6" />
-        <DropdownMenu>
-          <DropdownMenuTrigger as-child>
-            <Button variant="ghost" size="icon" :disabled="!doc">
-              <MoreVertical class="size-4" />
-              <span class="sr-only">More</span>
-            </Button>
-          </DropdownMenuTrigger>
-          <DropdownMenuContent align="end">
-            <DropdownMenuItem>Mark as unread</DropdownMenuItem>
-            <DropdownMenuItem>Star thread</DropdownMenuItem>
-            <DropdownMenuItem>Add label</DropdownMenuItem>
-            <DropdownMenuItem>Mute thread</DropdownMenuItem>
-          </DropdownMenuContent>
-        </DropdownMenu>
+<!--        <Separator orientation="vertical" class="mx-2 h-6" />-->
+<!--        <DropdownMenu>-->
+<!--          <DropdownMenuTrigger as-child>-->
+<!--            <Button variant="ghost" size="icon" :disabled="!doc">-->
+<!--              <MoreVertical class="size-4" />-->
+<!--              <span class="sr-only">More</span>-->
+<!--            </Button>-->
+<!--          </DropdownMenuTrigger>-->
+<!--          <DropdownMenuContent align="end">-->
+<!--            <DropdownMenuItem>Mark as unread</DropdownMenuItem>-->
+<!--            <DropdownMenuItem>Star thread</DropdownMenuItem>-->
+<!--            <DropdownMenuItem>Add label</DropdownMenuItem>-->
+<!--            <DropdownMenuItem>Mute thread</DropdownMenuItem>-->
+<!--          </DropdownMenuContent>-->
+<!--        </DropdownMenu>-->
         <Separator orientation="vertical" class="mx-2 h-6" />
         <Tooltip>
           <TooltipTrigger as-child>
@@ -241,7 +226,7 @@ const displayType = ref('json')
           :theme="monacoTheme"
           :model-value="JSON.stringify(doc.hit, null, 2)"
           language="json"
-          class="max-w-[100%]"
+          class="max-w-[100%] max-h-[100%]"
         />
         <ItemTable
           v-if="displayType === 'html'"

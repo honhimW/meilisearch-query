@@ -5,6 +5,7 @@ import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@
 import { cn } from '@/lib/utils'
 import router from '@/router'
 import type { LocationQuery } from 'vue-router'
+import { getQuery, updateQueries } from '@/stores/app'
 
 interface IndexSwitcherProps {
   isCollapsed: boolean
@@ -17,10 +18,9 @@ interface IndexSwitcherProps {
 const props = defineProps<IndexSwitcherProps>()
 
 onMounted(() => {
-  let query = router.currentRoute.value.query
-  let _index = query['_index']
-  if (_index !== undefined) {
-    selectedIndex.value = _index as string
+  let _index = getQuery('_index')
+  if (_index) {
+    selectedIndex.value = _index
   }
 })
 
@@ -29,14 +29,7 @@ const selectedIndex = ref<string>(props?.indexes[0]?.uid)
 const selectedIndexData = computed(() => props.indexes.find(item => item.uid === selectedIndex.value))
 
 watch(() => selectedIndex.value, value => {
-  console.log(value)
-  let query = {
-    ...router.currentRoute.value.query,
-    _index: value,
-  }
-  router.push({
-    query: query
-  })
+  updateQueries('_index', oldValue => value)
   emits('update:index', value)
 })
 

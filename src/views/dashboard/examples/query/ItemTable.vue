@@ -47,6 +47,26 @@ const InnerHTMLComponent = defineComponent({
   }
 })
 
+const resolveMedia = (raw: string) => {
+  let imgRegex = /^https?:\/\/.*\.(jpg|jpeg|png|gif|webp|svg|psd|bmp|tif)$/i
+  let audioRegex = /^https:?\/\/.*\.(mp3|wav|wma|ogg|ape)$/i
+  let videoRegex = /^https:?\/\/.*\.(mp4|avi|mkv|flv|wmv|mov)$/i
+  let link = /^https:?\/\/.*/i
+
+  let url = raw
+  if (imgRegex.test(url)) {
+    return h('img', {src: url, alt: 'Image', class: 'max-h-[240px]'})
+  } else if (audioRegex.test(url)) {
+    return h('audio', {src: url})
+  } else if (videoRegex.test(url)) {
+    return h('video', { src: url })
+  } else if (link.test(url)) {
+    return h('a', {href: url}, url)
+  } else {
+    return h(InnerHTMLComponent, {class: ' font-medium source', style: 'word-break: break-word;', html: raw})
+  }
+}
+
 const columns: ColumnDef<IData>[] = [
   {
     accessorKey: 'key',
@@ -60,7 +80,7 @@ const columns: ColumnDef<IData>[] = [
       class: 'flex items-center',
       style: 'width: 100%; height: 100%',
     }, [
-      h(InnerHTMLComponent, {class: ' font-medium source', style: 'word-break: break-word;', html: row.original.value}),
+      resolveMedia(row.original.value)
     ]),
     enableSorting: false,
   },

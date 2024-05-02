@@ -21,7 +21,7 @@ interface IndexSettings {
 
 defineProps<{
   documents: MDocument[]
-  indexSettings: IndexSettings
+  indexSettings?: IndexSettings
 }>()
 const selectedDocument = defineModel<MDocument>('selectedDocument', { required: false })
 
@@ -34,8 +34,6 @@ const onSelectedDocument = (item: MDocument) => {
   emits('click-document')
 }
 
-defineComponent(ListItem)
-
 </script>
 
 <template>
@@ -43,8 +41,8 @@ defineComponent(ListItem)
     <div class="flex-1 flex flex-col gap-2 p-4 pt-0">
       <TransitionGroup name="list" appear>
         <div
-          v-for="item of documents"
-          :key="item.id"
+          v-for="(item, idx) of documents"
+          :key="idx"
           :class="cn(
             'flex flex-col items-start gap-2 rounded-lg border p-3 text-left text-sm transition-all hover:bg-accent',
             selectedDocument === item && 'bg-muted',
