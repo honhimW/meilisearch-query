@@ -2,11 +2,15 @@
 import type { SearchParams } from 'meilisearch/src/types/types'
 import MonacoEditor from '@/views/dashboard/examples/query/MonacoEditor.vue'
 import * as monaco from 'monaco-editor'
-import { onMounted, ref } from 'vue'
+import { type CancellationToken, editor, languages } from 'monaco-editor'
+import { onMounted, ref, watch } from 'vue'
 import type { Options } from '@/views/dashboard/examples/query/monacoEditorType'
 import { getQuery, updateQueries } from '@/stores/app'
-import type { Position } from 'shiki'
-import type { CancellationToken } from 'monaco-editor'
+import { useMagicKeys } from '@vueuse/core'
+import CompletionItemKind = languages.CompletionItemKind
+import IEditorOptions = editor.IEditorOptions
+import { undefined } from 'zod'
+import { allSuggestions, atSortAsc, atSortDesc, parseInput } from '@/views/dashboard/examples/query/suggestions'
 
 const props = defineProps<{
   q: string
@@ -17,22 +21,47 @@ const emits = defineEmits<{
 }>()
 
 const searchStr = ref<string>('')
+const editorRef = ref<monaco.editor.IStandaloneCodeEditor>()
 
-const blockEnter = (editor: monaco.editor.IStandaloneCodeEditor) => {
+const keys = useMagicKeys({
+  passive: false,
+  onEventFired(e) {
+    // e.preventDefault()
+    if (e.ctrlKey && e.key === 'k') {
+      e.preventDefault()
+    }
+    return false
+  }
+})
+const ctrlK = keys['ctrl+k']
+
+watch(ctrlK, (value, oldValue, onCleanup) => {
+  if (value) {
+    editorRef.value?.focus()
+    // nav to search
+  }
+})
+
+const customizeEditor = (editor: monaco.editor.IStandaloneCodeEditor) => {
+  editorRef.value = editor
   editor.addCommand(monaco.KeyCode.Enter, () => {
     console.log(searchStr.value)
     updateQueries('q', o => searchStr.value)
     emits('performSearch', searchStr.value)
   })
+  editor.addCommand(monaco.KeyMod.Alt | monaco.KeyCode.Slash, args => {
+    editor.trigger('keyboard', 'editor.action.triggerSuggest', {})
+  }, 'editorTextFocus && !editorReadonly')
 }
 
 const updateSearchStr = (str: string) => {
   searchStr.value = str
 }
 
-const options: Options = {
+const options: IEditorOptions = {
   fontSize: 16,
   lineHeight: 36,
+  fontFamily: 'sans-serif',
   wordWrap: 'off',
   lineNumbers: 'off',
   scrollbar: {
@@ -42,7 +71,7 @@ const options: Options = {
   cursorStyle: 'line',
   contextmenu: false,
   minimap: {
-    enabled: false,
+    enabled: false
   },
   readOnly: false,
   automaticLayout: true,
@@ -50,7 +79,7 @@ const options: Options = {
   renderLineHighlight: 'line',
   selectOnLineNumbers: false,
   scrollBeyondLastLine: false,
-  overviewRulerBorder: false,
+  overviewRulerBorder: false
 }
 
 onMounted(() => {
@@ -59,36 +88,48 @@ onMounted(() => {
     searchStr.value = _q
   }
   emits('performSearch', searchStr.value)
+  configDSL()
+  window.parseInput = parseInput
+})
 
-  monaco.languages.registerCompletionItemProvider('msDSL', {
-    provideCompletionItems(model: monaco.editor.ITextModel, position: Position, context: monaco.languages.CompletionContext, token: CancellationToken): monaco.languages.ProviderResult<monaco.languages.CompletionList> {
-    }
-  })
+const configDSL = () => {
+  let msDSL = 'msDSL'
+  if (monaco.languages.getLanguages().findIndex(value => value.id === msDSL) != -1) {
+    return
+  }
+  monaco.languages.register({ id: msDSL })
 
-  monaco.languages.registerInlineCompletionsProvider('msDSL', {
-    freeInlineCompletions(completions: monaco.languages.InlineCompletions): void {
-    },
-    handleItemDidShow(completions: monaco.languages.InlineCompletions, item: monaco.languages.InlineCompletions["items"][number], updatedInsertText: string): void {
-    },
-    handlePartialAccept(completions: monaco.languages.InlineCompletions, item: monaco.languages.InlineCompletions["items"][number], acceptedCharacters: number): void {
-    },
-    provideInlineCompletions(model: editor.ITextModel, position: Position, context: monaco.languages.InlineCompletionContext, token: CancellationToken): monaco.languages.ProviderResult<monaco.languages.InlineCompletions> {
-      // 这里可以返回你的自定义代码片段
+  let suggestionBase = {
+    kind: monaco.languages.CompletionItemKind.Snippet,
+    insertTextRules: monaco.languages.CompletionItemInsertTextRule.InsertAsSnippet,
+  }
+
+  monaco.languages.registerCompletionItemProvider(msDSL, {
+    provideCompletionItems(model: monaco.editor.ITextModel, position: monaco.Position, context: monaco.languages.CompletionContext, token: CancellationToken): monaco.languages.ProviderResult<monaco.languages.CompletionList> {
+      let contentBeforeCursor = model.getValueInRange({
+        startColumn: 1,
+        endColumn: position.column,
+        startLineNumber: 1,
+        endLineNumber: 1,
+      })
+
+      if (contentBeforeCursor == '') {
+        return {
+          suggestions: allSuggestions(position)
+        }
+      }
+
+      let currentContent = contentBeforeCursor
+      if (contentBeforeCursor.lastIndexOf(' ') != -1 || contentBeforeCursor.lastIndexOf('\t') != -1) {
+        let breakTokenIndex = Math.max(contentBeforeCursor.lastIndexOf(' '), contentBeforeCursor.lastIndexOf('\t'))
+        currentContent = contentBeforeCursor.substring(breakTokenIndex + 1, contentBeforeCursor.length)
+      }
       return {
-        suggestions: [
-          {
-            label: 'mySnippet',
-            kind: monaco.languages.CompletionItemKind.Snippet,
-            insertText: '这是我的自定义代码片段',
-            insertTextRules: monaco.languages.CompletionItemInsertTextRule.InsertAsSnippet,
-            documentation: '这是我的自定义代码片段'
-          }
-        ]
+        suggestions: allSuggestions(position, currentContent)
       }
     }
   })
-
-})
+}
 
 </script>
 
@@ -99,8 +140,8 @@ onMounted(() => {
     :model-value="searchStr"
     style="height: 40px"
     :options="options"
-    language=""
-    @editor-mounted="blockEnter"
+    language="msDSL"
+    @editor-mounted="customizeEditor"
     @update:model-value="updateSearchStr"
   />
 </template>

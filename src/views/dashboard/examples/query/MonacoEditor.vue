@@ -120,6 +120,9 @@ export default defineComponent({
     watch(
       () => props.options,
       newValue => {
+        editor.updateOptions({
+
+        })
         editor.updateOptions(newValue)
       },
       { deep: true }

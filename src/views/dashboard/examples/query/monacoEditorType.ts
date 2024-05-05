@@ -1,4 +1,5 @@
 import { type PropType } from 'vue'
+import { editor } from 'monaco-editor'
 export type Theme = 'vs' | 'hc-black' | 'vs-dark'
 export type FoldingStrategy = 'auto' | 'indentation'
 export type RenderLineHighlight = 'all' | 'line' | 'none' | 'gutter'
@@ -12,6 +13,7 @@ export interface Options {
   }
   readOnly: boolean
   fontSize: number
+  lineHeight: number
   scrollBeyondLastLine: boolean
   overviewRulerBorder: boolean
 }
@@ -40,7 +42,7 @@ export const editorProps = {
     // default: 'vs-dark',
   },
   options: {
-    type: Object as PropType<Options>,
+    type: Object as PropType<editor.IEditorOptions>,
     default: function () {
       return {
         automaticLayout: true,
