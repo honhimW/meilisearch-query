@@ -1,6 +1,5 @@
 <script lang="ts" setup>
 import { computed, defineComponent, h } from 'vue'
-import { Badge } from '@/components/ui/badge'
 import type { Attribute, ScreenProps } from '@/views/dashboard/examples/query/Screen.vue'
 import { type ColumnDef, DataTable } from '@/components/ui/data-table'
 
@@ -16,7 +15,7 @@ const flatted = computed(() => {
   for (const flattenObjectKey in _flattenObject) {
     iDatas.push({
       key: flattenObjectKey,
-      value: _flattenObject[flattenObjectKey],
+      value: _flattenObject[flattenObjectKey]
     })
   }
 
@@ -43,7 +42,7 @@ interface IData {
 const InnerHTMLComponent = defineComponent({
   props: ['html'],
   render() {
-    return h('div', { innerHTML: this.html });
+    return h('div', { innerHTML: this.html })
   }
 })
 
@@ -55,15 +54,15 @@ const resolveMedia = (raw: string) => {
 
   let url = raw
   if (imgRegex.test(url)) {
-    return h('img', {src: url, alt: 'Image', class: 'max-h-[240px]'})
+    return h('img', { src: url, alt: 'Image', class: 'max-h-[240px]' })
   } else if (audioRegex.test(url)) {
-    return h('audio', {src: url})
+    return h('audio', { controls: true, src: url })
   } else if (videoRegex.test(url)) {
-    return h('video', { src: url })
+    return h('video', { controls: true, src: url })
   } else if (link.test(url)) {
-    return h('a', {href: url}, url)
+    return h('a', { href: url }, url)
   } else {
-    return h(InnerHTMLComponent, {class: ' font-medium source', style: 'word-break: break-word;', html: raw})
+    return h(InnerHTMLComponent, { class: ' font-medium source', style: 'word-break: break-word;', html: raw })
   }
 }
 
@@ -71,26 +70,26 @@ const columns: ColumnDef<IData>[] = [
   {
     accessorKey: 'key',
     header: 'KEY',
-    enableSorting: false,
+    enableSorting: false
   },
   {
     accessorKey: 'value',
     header: 'VALUE',
     cell: ({ row }) => h('div', {
       class: 'flex items-center',
-      style: 'width: 100%; height: 100%',
+      style: 'width: 100%; height: 100%'
     }, [
       resolveMedia(row.original.value)
     ]),
-    enableSorting: false,
-  },
-];
+    enableSorting: false
+  }
+]
 
 </script>
 
 <template>
   <div class="dscTruncateByHeight">
-    <DataTable :columns="columns" :data="flatted"></DataTable>
+    <DataTable :columns="columns" :data="flatted" />
   </div>
 </template>
 
@@ -111,6 +110,7 @@ const columns: ColumnDef<IData>[] = [
   display: inline-block;
   height: 610px;
 }
+
 span:hover {
   text-decoration: underline;
 }

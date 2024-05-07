@@ -4,13 +4,10 @@ import MonacoEditor from '@/views/dashboard/examples/query/MonacoEditor.vue'
 import * as monaco from 'monaco-editor'
 import { type CancellationToken, editor, languages } from 'monaco-editor'
 import { onMounted, ref, watch } from 'vue'
-import type { Options } from '@/views/dashboard/examples/query/monacoEditorType'
 import { getQuery, updateQueries } from '@/stores/app'
 import { useMagicKeys } from '@vueuse/core'
-import CompletionItemKind = languages.CompletionItemKind
+import { allSuggestions, parseInput } from '@/views/dashboard/examples/query/suggestions'
 import IEditorOptions = editor.IEditorOptions
-import { undefined } from 'zod'
-import { allSuggestions, atSortAsc, atSortDesc, parseInput } from '@/views/dashboard/examples/query/suggestions'
 
 const props = defineProps<{
   q: string
@@ -59,7 +56,7 @@ const updateSearchStr = (str: string) => {
 }
 
 const options: IEditorOptions = {
-  fontSize: 16,
+  fontSize: 13,
   lineHeight: 36,
   fontFamily: 'sans-serif',
   wordWrap: 'off',
@@ -101,7 +98,7 @@ const configDSL = () => {
 
   let suggestionBase = {
     kind: monaco.languages.CompletionItemKind.Snippet,
-    insertTextRules: monaco.languages.CompletionItemInsertTextRule.InsertAsSnippet,
+    insertTextRules: monaco.languages.CompletionItemInsertTextRule.InsertAsSnippet
   }
 
   monaco.languages.registerCompletionItemProvider(msDSL, {
@@ -110,7 +107,7 @@ const configDSL = () => {
         startColumn: 1,
         endColumn: position.column,
         startLineNumber: 1,
-        endLineNumber: 1,
+        endLineNumber: 1
       })
 
       if (contentBeforeCursor == '') {

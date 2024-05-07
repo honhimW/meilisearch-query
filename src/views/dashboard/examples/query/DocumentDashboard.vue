@@ -6,10 +6,9 @@ import DocumentList from './DocumentList.vue'
 import Screen, { type Attribute, type ScreenProps } from './Screen.vue'
 import { cn } from '@/lib/utils'
 import { Separator } from '@/components/ui/separator'
-import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs'
+import { Tabs, TabsContent } from '@/components/ui/tabs'
 import { ResizableHandle, ResizablePanel, ResizablePanelGroup } from '@/components/ui/resizable'
 import type { MDocument } from '@/views/dashboard/examples/query/DocumentList.vue'
-import MultiSearchPopover from '@/views/dashboard/examples/query/MultiSearchPopover.vue'
 import type { MultiSearchQuery, SearchParams } from 'meilisearch/src/types/types'
 import { type Hit, type MultiSearchResult, type Settings } from 'meilisearch'
 import { RotateCw } from 'lucide-vue-next'
@@ -17,7 +16,7 @@ import { Button } from '@/components/ui/button'
 import { getQuery } from '@/stores/app'
 import DocumentDisplay from '@/views/dashboard/examples/query/DocumentDisplay.vue'
 import MultiSearchPopover2 from '@/views/dashboard/examples/query/MultiSearchPopover2.vue'
-import MonacoEditor from '@/views/dashboard/examples/query/MonacoEditor.vue'
+import Icon from '@/components/ui/Icon.vue'
 
 interface MailProps {
   defaultLayout?: number[]
@@ -108,7 +107,7 @@ const search = (query?: SearchParams | string, page = 0) => {
       }
     }
     window.msClient?.multiSearch({
-      queries: [_searchQuery],
+      queries: [_searchQuery]
     }).then(value => {
       let results = value.results
       renderList(results, mergeResults.value, page == 0)
@@ -220,93 +219,93 @@ const rotate = (event) => {
 </script>
 
 <template>
-    <ResizablePanelGroup
-      id="resize-panel-group-1"
-      direction="horizontal"
-      :class="cn(
+  <ResizablePanelGroup
+    id="resize-panel-group-1"
+    direction="horizontal"
+    :class="cn(
         'h-full',
         'items-stretch',
         'max-h-[800px]',
       )"
+  >
+    <ResizablePanel
+      id="resize-panel-1"
+      :default-size="defaultLayout[0]"
+      collapsible
+      :min-size="15"
+      :max-size="30"
+      :class="cn(isCollapsed && 'min-w-[50px] transition-all duration-300 ease-in-out')"
+      @expand="onExpand"
+      @collapse="onCollapse"
     >
-      <ResizablePanel
-        id="resize-panel-1"
-        :default-size="defaultLayout[0]"
-        collapsible
-        :min-size="15"
-        :max-size="30"
-        :class="cn(isCollapsed && 'min-w-[50px] transition-all duration-300 ease-in-out')"
-        @expand="onExpand"
-        @collapse="onCollapse"
-      >
-        <div :class="cn('flex h-[52px] items-center justify-center', isCollapsed ? 'h-[52px]' : 'px-2')">
-          <IndexSwitcher
-            :is-collapsed="isCollapsed"
-            :indexes="indexes"
-            @update:index="payload => {selectedIndex = payload}" />
-          <Button variant="ghost" size="icon" @click="rotate">
-            <RotateCw class="size-4" />
-            <span class="sr-only">PanelRightClose</span>
-          </Button>
+      <div :class="cn('flex h-[52px] items-center justify-center', isCollapsed ? 'h-[52px]' : 'px-2')">
+        <IndexSwitcher
+          :is-collapsed="isCollapsed"
+          :indexes="indexes"
+          @update:index="payload => {selectedIndex = payload}" />
+        <Button variant="ghost" size="icon" @click="rotate">
+          <RotateCw class="size-4" />
+          <span class="sr-only">PanelRightClose</span>
+        </Button>
+      </div>
+      <Separator />
+      <Screen
+        :selected="screenAttributes.selected"
+        :unselected="screenAttributes.unselected"
+        @updateFields="updateAttributes"
+      />
+    </ResizablePanel>
+    <ResizableHandle id="resize-handle-1" with-handle />
+    <ResizablePanel id="resize-panel-2" :default-size="defaultLayout[1]" :min-size="30">
+      <Tabs default-value="all">
+        <!--          <div class="flex items-center px-4 py-2">-->
+        <!--            <h1 class="text-xl font-bold">-->
+        <!--              Result-->
+        <!--            </h1>-->
+        <!--            <TabsList class="ml-auto">-->
+        <!--              <TabsTrigger value="all" class="text-zinc-600 dark:text-zinc-200">-->
+        <!--                Struct-->
+        <!--              </TabsTrigger>-->
+        <!--              <TabsTrigger value="unread" class="text-zinc-600 dark:text-zinc-200">-->
+        <!--                Plain-->
+        <!--              </TabsTrigger>-->
+        <!--            </TabsList>-->
+        <!--          </div>-->
+        <!--          <Separator />-->
+        <div class="p-2">
+          <div class="relative flex">
+            <MultiSearchPopover2 q="" @performSearch="search" />
+          </div>
         </div>
         <Separator />
-        <Screen
-          :selected="screenAttributes.selected"
-          :unselected="screenAttributes.unselected"
-          @updateFields="updateAttributes"
-        />
-      </ResizablePanel>
-      <ResizableHandle id="resize-handle-1" with-handle />
-      <ResizablePanel id="resize-panel-2" :default-size="defaultLayout[1]" :min-size="30">
-        <Tabs default-value="all">
-<!--          <div class="flex items-center px-4 py-2">-->
-<!--            <h1 class="text-xl font-bold">-->
-<!--              Result-->
-<!--            </h1>-->
-<!--            <TabsList class="ml-auto">-->
-<!--              <TabsTrigger value="all" class="text-zinc-600 dark:text-zinc-200">-->
-<!--                Struct-->
-<!--              </TabsTrigger>-->
-<!--              <TabsTrigger value="unread" class="text-zinc-600 dark:text-zinc-200">-->
-<!--                Plain-->
-<!--              </TabsTrigger>-->
-<!--            </TabsList>-->
-<!--          </div>-->
-<!--          <Separator />-->
-          <div class="p-2">
-              <div class="relative">
-                <MultiSearchPopover2 q="" @performSearch="search" />
+        <div class="flex items-start p-4">
+          <div class="flex items-start gap-4 text-sm">
+            <div class="grid gap-1">
+              <div class="font-semibold">
+                Hits: {{ 1000 }}
               </div>
-          </div>
-          <Separator />
-          <div class="flex items-start p-4">
-            <div class="flex items-start gap-4 text-sm">
-              <div class="grid gap-1">
-                <div class="font-semibold">
-                  Hits: {{1000}}
-                </div>
-              </div>
-              <div class="grid gap-1">
-                <div class="font-semibold">
-                  Time spent: 2ms
-                </div>
+            </div>
+            <div class="grid gap-1">
+              <div class="font-semibold">
+                Time spent: 2ms
               </div>
             </div>
           </div>
-          <Separator />
-          <TabsContent value="all" class="m-0 p-4">
-            <DocumentList v-model:selected-document="selectedDocument"
-                      :documents="mDocumentList"
-                      @click-document="spreadDocument = true"
-            />
-          </TabsContent>
-        </Tabs>
-      </ResizablePanel>
-      <ResizableHandle id="resiz-handle-2" with-handle />
-      <ResizablePanel v-if="spreadDocument" id="resize-panel-3" :default-size="defaultLayout[2]">
-        <DocumentDisplay :doc="selectedDocumentData" @close-display="spreadDocument = false" />
-      </ResizablePanel>
-    </ResizablePanelGroup>
+        </div>
+        <Separator />
+        <TabsContent value="all" class="m-0 p-4">
+          <DocumentList v-model:selected-document="selectedDocument"
+                        :documents="mDocumentList"
+                        @click-document="spreadDocument = true"
+          />
+        </TabsContent>
+      </Tabs>
+    </ResizablePanel>
+    <ResizableHandle id="resiz-handle-2" with-handle />
+    <ResizablePanel v-if="spreadDocument" id="resize-panel-3" :default-size="defaultLayout[2]">
+      <DocumentDisplay :doc="selectedDocumentData" @close-display="spreadDocument = false" />
+    </ResizablePanel>
+  </ResizablePanelGroup>
 </template>
 
 <style scoped>
