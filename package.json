@@ -26,6 +26,7 @@
     "@unovis/vue": "^1.3.5",
     "@vee-validate/zod": "^4.12.6",
     "@vueuse/core": "^10.9.0",
+    "antlr4": "^4.13.1-patch-1",
     "class-variance-authority": "^0.7.0",
     "clsx": "^2.1.0",
     "codesandbox": "^2.2.3",

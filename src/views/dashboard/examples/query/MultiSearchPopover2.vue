@@ -8,6 +8,7 @@ import { getQuery, updateQueries } from '@/stores/app'
 import { useMagicKeys } from '@vueuse/core'
 import { allSuggestions, parseInput } from '@/views/dashboard/examples/query/suggestions'
 import IEditorOptions = editor.IEditorOptions
+import parseAST from '@/lib/parser'
 
 const props = defineProps<{
   q: string
@@ -87,6 +88,7 @@ onMounted(() => {
   emits('performSearch', searchStr.value)
   configDSL()
   window.parseInput = parseInput
+  window.parseAST = parseAST
 })
 
 const configDSL = () => {
