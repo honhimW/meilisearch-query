@@ -1,52 +1,104 @@
+// Student Main
+// 2020-07-22
+// Public domain
+
+// JSON5 is a superset of JSON, it included some feature from ES5.1
+// See https://json5.org/
+// Derived from ../json/JSON.g4 which original derived from http://json.org
+
+// $antlr-format alignTrailingComments true, columnLimit 150, minEmptyLines 1, maxEmptyLinesToKeep 1, reflowComments false, useTab false
+// $antlr-format allowShortRulesOnASingleLine false, allowShortBlocksOnASingleLine true, alignSemicolons hanging, alignColons hanging
+
 grammar MsDsl;
 
 line
-    : none
-    | single
+    : single?
     | multiple
     ;
 
-none
-    : WS*
-    ;
-
 single
-    : content?
+    : content
     ;
 
 multiple
-    : content+
+    : content (content)+
     ;
 
-content: sortContent ;
+content
+    : sortContent | filterContent | onContent | queryContent
+    ;
 
 sortContent
-    : (AT_SORT_ASC | AT_SORT_DESC) ':' key
+    : AT_SORT ':' (ASC | DESC) key
     ;
 
-//filterContent: HASH key COLON OPERATOR PLAIN_VALUE;
-//queryContent: PLAIN_VALUE;
+AT_SORT
+    : '@sort'
+    ;
+ASC: '+';
+DESC: '-';
 
-AT_SORT_ASC: '@sort+';
-AT_SORT_DESC: '@sort-';
+filterContent
+    : HASH key ':' FILTER_SYMBOLS value
+    ;
+
 HASH: '#';
-COLON: ':';
-OPERATOR: '=' | '!=' | '>' | '<' | '>=' | '<=';
-ATTRIBUTE_NAME: NONE_QUOTE_CHAR+ ('.' NONE_QUOTE_CHAR+)*;
+
+FILTER_SYMBOLS
+    : '='
+    | '!='
+    | '>'
+    | '>='
+    | '<'
+    | '<='
+    ;
+
+queryContent
+    : STRING
+    | IDENTIFIER
+    | number
+    ;
+
+onContent
+    : AT_ON ':' keys
+    ;
+
+AT_ON
+    : '@on'
+    ;
+
+keys
+    : '[' key (',' key)* ']'
+    ;
+
+// primary
 
 key
     : STRING
     | IDENTIFIER
     | LITERAL
+    | NUMERIC_LITERAL
+    | IDENTIFIER ('.' IDENTIFIER)+
     ;
 
-NUMBER
-    : INT ('.' [0-9]*)? // 1234, 1234.5
+value
+    : STRING
+    | IDENTIFIER
+    | number
     ;
 
-STRING
-    : '"' DOUBLE_QUOTE_CHAR* '"'
-    | '\'' SINGLE_QUOTE_CHAR* '\''
+number
+    : SYMBOL? (NUMERIC_LITERAL | NUMBER)
+    ;
+
+// Lexer
+
+SINGLE_LINE_COMMENT
+    : '//' .*? (EOF) -> skip
+    ;
+
+MULTI_LINE_COMMENT
+    : '/*' .*? '*/' -> skip
     ;
 
 LITERAL
@@ -55,9 +107,9 @@ LITERAL
     | 'null'
     ;
 
-fragment NONE_QUOTE_CHAR
-    : ~["'\\\r\n]
-    | ESCAPE_SEQUENCE
+STRING
+    : '"' DOUBLE_QUOTE_CHAR* '"'
+    | '\'' SINGLE_QUOTE_CHAR* '\''
     ;
 
 fragment DOUBLE_QUOTE_CHAR
@@ -72,12 +124,28 @@ fragment SINGLE_QUOTE_CHAR
 
 fragment ESCAPE_SEQUENCE
     : '\\' (
-        UNICODE_SEQUENCE         // \u1234
+        | UNICODE_SEQUENCE       // \u1234
         | ['"\\/bfnrtv]          // single escape char
         | ~['"\\bfnrtv0-9xu\r\n] // non escape char
         | '0'                    // \0
         | 'x' HEX HEX            // \x3a
     )
+    ;
+
+NUMBER
+    : INT ('.' [0-9]*)? EXP? // +1.e2, 1234, 1234.5
+    | '.' [0-9]+ EXP?        // -.2e3
+    | '0' [xX] HEX+          // 0x12345678
+    ;
+
+NUMERIC_LITERAL
+    : 'Infinity'
+    | 'NaN'
+    ;
+
+SYMBOL
+    : '+'
+    | '-'
     ;
 
 fragment HEX
@@ -87,6 +155,10 @@ fragment HEX
 fragment INT
     : '0'
     | [1-9] [0-9]*
+    ;
+
+fragment EXP
+    : [Ee] SYMBOL? [0-9]*
     ;
 
 IDENTIFIER

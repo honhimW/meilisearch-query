@@ -2,13 +2,15 @@
 import type { SearchParams } from 'meilisearch/src/types/types'
 import MonacoEditor from '@/views/dashboard/examples/query/MonacoEditor.vue'
 import * as monaco from 'monaco-editor'
-import { type CancellationToken, editor, languages } from 'monaco-editor'
-import { onMounted, ref, watch } from 'vue'
+import { type CancellationToken, editor } from 'monaco-editor'
+import { computed, onMounted, ref, watch } from 'vue'
 import { getQuery, updateQueries } from '@/stores/app'
 import { useMagicKeys } from '@vueuse/core'
-import { allSuggestions, parseInput } from '@/views/dashboard/examples/query/suggestions'
-import IEditorOptions = editor.IEditorOptions
-import parseAST from '@/lib/parser'
+import toAST from '@/lib/parser'
+import { allSuggestions } from '@/views/dashboard/examples/query/suggestions'
+import { ContentContext } from '@/lib/MsDslParser'
+import type { Filter } from 'meilisearch'
+import { parse2SearchParam } from '@/views/dashboard/examples/query/dsl/MsDslTransformer'
 
 const props = defineProps<{
   q: string
@@ -40,23 +42,58 @@ watch(ctrlK, (value, oldValue, onCleanup) => {
   }
 })
 
+watch(searchStr, (value, oldValue, onCleanup) => {
+  let ast = toAST(value)
+  ast.ast?.line()
+  ast.lexerErrors?.forEach(e => {
+
+  })
+  ast.parserErrors?.forEach(e => {
+
+  })
+})
+
 const customizeEditor = (editor: monaco.editor.IStandaloneCodeEditor) => {
   editorRef.value = editor
   editor.addCommand(monaco.KeyCode.Enter, () => {
-    console.log(searchStr.value)
     updateQueries('q', o => searchStr.value)
-    emits('performSearch', searchStr.value)
+    try {
+      let searchParams = parse2SearchParam(searchStr.value)
+      emits('performSearch', searchParams)
+    } catch (e) {
+      emits('performSearch', searchStr.value)
+    }
   })
   editor.addCommand(monaco.KeyMod.Alt | monaco.KeyCode.Slash, args => {
     editor.trigger('keyboard', 'editor.action.triggerSuggest', {})
   }, 'editorTextFocus && !editorReadonly')
+  editor.addCommand(monaco.KeyMod.Alt | monaco.KeyMod.CtrlCmd | monaco.KeyCode.DownArrow, args => {
+  })
+  editor.addCommand(monaco.KeyMod.Alt | monaco.KeyMod.CtrlCmd | monaco.KeyCode.UpArrow, args => {
+  })
+  editor.addCommand(monaco.KeyMod.Alt | monaco.KeyCode.DownArrow, args => {
+  })
+  editor.addCommand(monaco.KeyMod.Alt | monaco.KeyCode.UpArrow, args => {
+  })
+  editor.addCommand(monaco.KeyMod.Shift | monaco.KeyCode.Enter, args => {
+  })
+  editor.addCommand(monaco.KeyMod.CtrlCmd | monaco.KeyMod.Shift | monaco.KeyCode.Enter, args => {
+  })
+  editor.addCommand(monaco.KeyMod.Alt | monaco.KeyMod.Shift | monaco.KeyCode.DownArrow, args => {
+  })
+  editor.addCommand(monaco.KeyMod.Alt | monaco.KeyMod.Shift | monaco.KeyCode.UpArrow, args => {
+  })
+
+  monaco.editor.createWebWorker({
+    moduleId
+  })
 }
 
 const updateSearchStr = (str: string) => {
   searchStr.value = str
 }
 
-const options: IEditorOptions = {
+const options: editor.IEditorOptions = {
   fontSize: 13,
   lineHeight: 36,
   fontFamily: 'sans-serif',
@@ -87,8 +124,6 @@ onMounted(() => {
   }
   emits('performSearch', searchStr.value)
   configDSL()
-  window.parseInput = parseInput
-  window.parseAST = parseAST
 })
 
 const configDSL = () => {

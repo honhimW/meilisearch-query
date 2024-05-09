@@ -46,7 +46,11 @@ const InnerHTMLComponent = defineComponent({
   }
 })
 
-const resolveMedia = (raw: string) => {
+const resolveMedia = (raw: any) => {
+  if (typeof raw == 'string' && raw.indexOf('</ais-highlight>') != -1) {
+    return h(InnerHTMLComponent, { class: ' font-medium source', style: 'word-break: break-word;', html: raw })
+  }
+
   let imgRegex = /^https?:\/\/.*\.(jpg|jpeg|png|gif|webp|svg|psd|bmp|tif)$/i
   let audioRegex = /^https:?\/\/.*\.(mp3|wav|wma|ogg|ape)$/i
   let videoRegex = /^https:?\/\/.*\.(mp4|avi|mkv|flv|wmv|mov)$/i

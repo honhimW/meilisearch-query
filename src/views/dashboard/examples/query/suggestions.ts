@@ -58,9 +58,6 @@ export const allSuggestions = (position: monaco.Position, prefix = '') => {
   ]
     .filter(value => {
       const startsWith = value?.insertText?.startsWith(prefix)
-      console.log(prefix)
-      console.log(value)
-      console.log(startsWith)
       return startsWith
     })
     .map(value => {

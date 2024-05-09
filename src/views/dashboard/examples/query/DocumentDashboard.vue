@@ -1,9 +1,7 @@
 <script lang="ts" setup>
 import { computed, onMounted, ref } from 'vue'
 import { refDebounced } from '@vueuse/core'
-import IndexSwitcher from './IndexSwitcher.vue'
-import DocumentList from './DocumentList.vue'
-import Screen, { type Attribute, type ScreenProps } from './Screen.vue'
+import { type Attribute, type ScreenProps } from './Screen.vue'
 import { cn } from '@/lib/utils'
 import { Separator } from '@/components/ui/separator'
 import { Tabs, TabsContent } from '@/components/ui/tabs'
@@ -14,9 +12,13 @@ import { type Hit, type MultiSearchResult, type Settings } from 'meilisearch'
 import { RotateCw } from 'lucide-vue-next'
 import { Button } from '@/components/ui/button'
 import { getQuery } from '@/stores/app'
-import DocumentDisplay from '@/views/dashboard/examples/query/DocumentDisplay.vue'
-import MultiSearchPopover2 from '@/views/dashboard/examples/query/MultiSearchPopover2.vue'
-import Icon from '@/components/ui/Icon.vue'
+import {
+  DocumentDisplay,
+  MultiSearchPopover2,
+  IndexSwitcher,
+  DocumentList,
+  Screen,
+} from '.'
 
 interface MailProps {
   defaultLayout?: number[]
@@ -208,7 +210,7 @@ function onExpand() {
   isCollapsed.value = false
 }
 
-const rotate = (event) => {
+const rotate = (event: any) => {
   event.target.classList.add('rotate-animation')
   setTimeout(() => {
     event.target.classList.remove('rotate-animation')

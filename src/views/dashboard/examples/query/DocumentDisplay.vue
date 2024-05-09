@@ -1,12 +1,11 @@
 <script lang="ts" setup>
-import { Archive, ArchiveX, Braces, Clock, CodeXml, MoreVertical, PanelRightClose, Trash2 } from 'lucide-vue-next'
+import { Archive, ArchiveX, Braces, Clock, CodeXml, PanelRightClose, Trash2 } from 'lucide-vue-next'
 import { computed, onMounted, ref } from 'vue'
 import addDays from 'date-fns/addDays'
 import addHours from 'date-fns/addHours'
 import format from 'date-fns/format'
 import nextSaturday from 'date-fns/nextSaturday'
 import { Calendar } from '@/components/ui/calendar'
-import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuTrigger } from '@/components/ui/dropdown-menu'
 import { Popover, PopoverContent, PopoverTrigger } from '@/components/ui/popover'
 import { Button } from '@/components/ui/button'
 import { Label } from '@/components/ui/label'
@@ -156,7 +155,8 @@ const displayType = ref('html')
           <ToggleGroup type="single" v-model="displayType">
             <Tooltip>
               <TooltipTrigger as-child>
-                <ToggleGroupItem value="json" aria-label="Toggle bold" :variant="displayType === 'json' ? 'outline' : 'default'">
+                <ToggleGroupItem value="json" aria-label="Toggle bold"
+                                 :variant="displayType === 'json' ? 'outline' : 'default'">
                   <Braces class="h-4 w-4" />
                 </ToggleGroupItem>
               </TooltipTrigger>
@@ -164,7 +164,8 @@ const displayType = ref('html')
             </Tooltip>
             <Tooltip>
               <TooltipTrigger as-child>
-                <ToggleGroupItem value="html" aria-label="Toggle italic" :variant="displayType === 'html' ? 'outline' : 'default'">
+                <ToggleGroupItem value="html" aria-label="Toggle italic"
+                                 :variant="displayType === 'html' ? 'outline' : 'default'">
                   <CodeXml class="h-4 w-4" />
                 </ToggleGroupItem>
               </TooltipTrigger>
@@ -172,21 +173,21 @@ const displayType = ref('html')
             </Tooltip>
           </ToggleGroup>
         </div>
-<!--        <Separator orientation="vertical" class="mx-2 h-6" />-->
-<!--        <DropdownMenu>-->
-<!--          <DropdownMenuTrigger as-child>-->
-<!--            <Button variant="ghost" size="icon" :disabled="!doc">-->
-<!--              <MoreVertical class="size-4" />-->
-<!--              <span class="sr-only">More</span>-->
-<!--            </Button>-->
-<!--          </DropdownMenuTrigger>-->
-<!--          <DropdownMenuContent align="end">-->
-<!--            <DropdownMenuItem>Mark as unread</DropdownMenuItem>-->
-<!--            <DropdownMenuItem>Star thread</DropdownMenuItem>-->
-<!--            <DropdownMenuItem>Add label</DropdownMenuItem>-->
-<!--            <DropdownMenuItem>Mute thread</DropdownMenuItem>-->
-<!--          </DropdownMenuContent>-->
-<!--        </DropdownMenu>-->
+        <!--        <Separator orientation="vertical" class="mx-2 h-6" />-->
+        <!--        <DropdownMenu>-->
+        <!--          <DropdownMenuTrigger as-child>-->
+        <!--            <Button variant="ghost" size="icon" :disabled="!doc">-->
+        <!--              <MoreVertical class="size-4" />-->
+        <!--              <span class="sr-only">More</span>-->
+        <!--            </Button>-->
+        <!--          </DropdownMenuTrigger>-->
+        <!--          <DropdownMenuContent align="end">-->
+        <!--            <DropdownMenuItem>Mark as unread</DropdownMenuItem>-->
+        <!--            <DropdownMenuItem>Star thread</DropdownMenuItem>-->
+        <!--            <DropdownMenuItem>Add label</DropdownMenuItem>-->
+        <!--            <DropdownMenuItem>Mute thread</DropdownMenuItem>-->
+        <!--          </DropdownMenuContent>-->
+        <!--        </DropdownMenu>-->
         <Separator orientation="vertical" class="mx-2 h-6" />
         <Tooltip>
           <TooltipTrigger as-child>

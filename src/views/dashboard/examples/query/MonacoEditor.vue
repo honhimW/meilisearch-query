@@ -11,8 +11,6 @@ import tsWorker from 'monaco-editor/esm/vs/language/typescript/ts.worker?worker'
 import EditorWorker from 'monaco-editor/esm/vs/editor/editor.worker?worker'
 import * as monaco from 'monaco-editor'
 import { editor } from 'monaco-editor'
-import IEditorOptions = editor.IEditorOptions
-import IStandaloneCodeEditor = editor.IStandaloneCodeEditor
 
 export default defineComponent({
   name: 'monacoEditor',
@@ -37,7 +35,7 @@ export default defineComponent({
         return new EditorWorker()
       }
     }
-    let editor: monaco.editor.IStandaloneCodeEditor
+    let editor: editor.IStandaloneCodeEditor
     const codeEditBox = ref()
     const init = () => {
       monaco.editor.defineTheme('shacdn-ui-dark', {
@@ -97,7 +95,7 @@ export default defineComponent({
           let theme: string = options.get('theme')
 
           if (newValue !== theme) {
-            let newOptions: IEditorOptions = {
+            let newOptions: editor.IEditorOptions = {
               ...options,
               theme: newValue
             }
@@ -143,7 +141,7 @@ export default defineComponent({
   }
 })
 
-const addKeyBindings = (editor: IStandaloneCodeEditor) => {
+const addKeyBindings = (editor: editor.IStandaloneCodeEditor) => {
   monaco.editor.addKeybindingRules([
     {
       keybinding: monaco.KeyMod.Alt | monaco.KeyMod.CtrlCmd | monaco.KeyCode.DownArrow,
