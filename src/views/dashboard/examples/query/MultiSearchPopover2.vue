@@ -11,6 +11,8 @@ import { allSuggestions } from '@/views/dashboard/examples/query/suggestions'
 import { ContentContext } from '@/lib/MsDslParser'
 import type { Filter } from 'meilisearch'
 import { parse2SearchParam } from '@/views/dashboard/examples/query/dsl/MsDslTransformer'
+import ITextModel = editor.ITextModel
+import type { MsDslError } from '@/lib/MsDslErrorListener'
 
 const props = defineProps<{
   q: string
@@ -42,24 +44,13 @@ watch(ctrlK, (value, oldValue, onCleanup) => {
   }
 })
 
-watch(searchStr, (value, oldValue, onCleanup) => {
-  let ast = toAST(value)
-  ast.ast?.line()
-  ast.lexerErrors?.forEach(e => {
-
-  })
-  ast.parserErrors?.forEach(e => {
-
-  })
-})
-
 const customizeEditor = (editor: monaco.editor.IStandaloneCodeEditor) => {
   editorRef.value = editor
   editor.addCommand(monaco.KeyCode.Enter, () => {
     updateQueries('q', o => searchStr.value)
     try {
       let searchParams = parse2SearchParam(searchStr.value)
-      emits('performSearch', searchParams)
+      emits('performSearch', searchParams.sp)
     } catch (e) {
       emits('performSearch', searchStr.value)
     }
@@ -84,8 +75,30 @@ const customizeEditor = (editor: monaco.editor.IStandaloneCodeEditor) => {
   editor.addCommand(monaco.KeyMod.Alt | monaco.KeyMod.Shift | monaco.KeyCode.UpArrow, args => {
   })
 
-  monaco.editor.createWebWorker({
-    moduleId
+  editor.onDidChangeModelContent(e => {
+    let { sp, le, pe } = parse2SearchParam(searchStr.value)
+
+    let errors: MsDslError[] = []
+    if (le.length > 0) {
+      le.forEach((error) => errors.push(error))
+    }
+    if (pe.length > 0) {
+      pe.forEach((error) => errors.push(error))
+    }
+    if (errors.length > 0) {
+      console.log(errors)
+      let markers: editor.IMarkerData[] = errors.map(e => ({
+        message: e.message,
+        startColumn: e.startColumn,
+        endColumn: e.endColumn,
+        startLineNumber: e.line,
+        endLineNumber: e.line,
+        severity: monaco.MarkerSeverity.Error
+      }))
+      monaco.editor.setModelMarkers(editor.getModel() as ITextModel, 'msDSL', markers)
+    } else {
+      monaco.editor.setModelMarkers(editor.getModel() as ITextModel, 'msDSL', [])
+    }
   })
 }
 
@@ -133,10 +146,23 @@ const configDSL = () => {
   }
   monaco.languages.register({ id: msDSL })
 
-  let suggestionBase = {
-    kind: monaco.languages.CompletionItemKind.Snippet,
-    insertTextRules: monaco.languages.CompletionItemInsertTextRule.InsertAsSnippet
-  }
+  monaco.languages.setMonarchTokensProvider(msDSL, {
+    ignoreCase: false,
+    tokenizer: {
+      filter: [
+
+      ],
+      sort: [
+
+      ],
+      on: [
+
+      ],
+      query: [
+
+      ],
+    },
+  })
 
   monaco.languages.registerCompletionItemProvider(msDSL, {
     provideCompletionItems(model: monaco.editor.ITextModel, position: monaco.Position, context: monaco.languages.CompletionContext, token: CancellationToken): monaco.languages.ProviderResult<monaco.languages.CompletionList> {

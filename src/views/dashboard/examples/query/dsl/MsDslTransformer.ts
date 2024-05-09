@@ -18,9 +18,12 @@ export const checkParser = (input: string): MsDslError[] | undefined => {
   }
 }
 
-export const parse2SearchParam = (input: string): SearchParams => {
-  let { ast } = toAST(input)
-
+export const parse2SearchParam = (input: string): {
+  sp: SearchParams,
+  le: MsDslError[],
+  pe: MsDslError[],
+} => {
+  let { ast, lexerErrors, parserErrors } = toAST(input)
   let lineContext = ast.line()
   let contentContexts: ContentContext[] = []
   if (lineContext.single()) {
@@ -46,48 +49,56 @@ export const parse2SearchParam = (input: string): SearchParams => {
     attributesToSearchOn: ['*'],
   }
 
-  for (let cc of contentContexts) {
-    if (cc.filterContent()) {
-      let filterContentContext = cc.filterContent()
-      let keyContext = filterContentContext.key()
-      let symbol = filterContentContext.FILTER_SYMBOLS()
-      let valueContext = filterContentContext.value()
-      let keyText = getKey(keyContext)
-      let symbolText = symbol.getText()
-      let valueText = getValue(valueContext)
-      if (keyText && symbolText && valueText) {
-        filters.push(`${keyText} ${symbolText} ${valueText}`)
-      }
-    } else if (cc.sortContent()) {
-      let sortContentContext = cc.sortContent()
-      let asc = sortContentContext.ASC()
-      let desc = sortContentContext.DESC()
-      let keyContext = sortContentContext.key()
-      let keyText = getKey(keyContext)
-      if (asc) {
-        sorts.push(keyText + ':asc')
-      } else if (desc) {
-        sorts.push(keyText + ':desc')
-      }
-    } else if (cc.onContent()) {
-      let onContentContext = cc.onContent()
-      let keysContext = onContentContext.keys()
-      let keyContexts = keysContext.key_list()
-      for (let keyContext of keyContexts) {
-        let key = getKey(keyContext)
-        ons.push(key)
-      }
-      searchParams.attributesToSearchOn = ons
-    } else if (cc.queryContent()) {
-      let queryContentContext = cc.queryContent()
-      let query = getQuery(queryContentContext)
-      if (query) {
-        searchParams.q = query
+  try {
+    for (let cc of contentContexts) {
+      if (cc.filterContent()) {
+        let filterContentContext = cc.filterContent()
+        let keyContext = filterContentContext.key()
+        let symbol = filterContentContext.FILTER_SYMBOLS()
+        let valueContext = filterContentContext.value()
+        let keyText = getKey(keyContext)
+        let symbolText = symbol.getText()
+        let valueText = getValue(valueContext)
+        if (keyText && symbolText && valueText) {
+          filters.push(`${keyText} ${symbolText} ${valueText}`)
+        }
+      } else if (cc.sortContent()) {
+        let sortContentContext = cc.sortContent()
+        let asc = sortContentContext.ASC()
+        let desc = sortContentContext.DESC()
+        let keyContext = sortContentContext.key()
+        let keyText = getKey(keyContext)
+        if (asc) {
+          sorts.push(keyText + ':asc')
+        } else if (desc) {
+          sorts.push(keyText + ':desc')
+        }
+      } else if (cc.onContent()) {
+        let onContentContext = cc.onContent()
+        let keysContext = onContentContext.keys()
+        let keyContexts = keysContext.key_list()
+        for (let keyContext of keyContexts) {
+          let key = getKey(keyContext)
+          ons.push(key)
+        }
+        searchParams.attributesToSearchOn = ons
+      } else if (cc.queryContent()) {
+        let queryContentContext = cc.queryContent()
+        let query = getQuery(queryContentContext)
+        if (query) {
+          searchParams.q = query
+        }
       }
     }
+  } catch (e) {
+
   }
 
-  return searchParams
+  return {
+    sp: searchParams,
+    le: lexerErrors,
+    pe: parserErrors,
+  }
 }
 
 const getKey = (keyContext: KeyContext): string | undefined => {

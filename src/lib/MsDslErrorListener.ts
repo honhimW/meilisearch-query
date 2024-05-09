@@ -15,7 +15,7 @@ export default class MsDslErrorListener implements ErrorListener<any> {
   private errors: MsDslError[] = []
 
   syntaxError(recognizer: Recognizer<any>, offendingSymbol: any, line: number, column: number, msg: string, e: RecognitionException | undefined): void {
-    console.log(e)
+    console.log(recognizer)
     this.errors.push({
       line: line,
       startColumn: column,
