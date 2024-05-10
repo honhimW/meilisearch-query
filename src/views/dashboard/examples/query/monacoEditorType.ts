@@ -56,6 +56,7 @@ export const editorProps = {
         fontSize: 14,
         scrollBeyondLastLine: false,
         overviewRulerBorder: false,
+        autoClosingQuotes: 'always',
       }
     },
   },

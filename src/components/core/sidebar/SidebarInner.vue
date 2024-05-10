@@ -59,7 +59,6 @@ watch(altA, (value, oldValue, onCleanup) => {
 
 watch(ctrlK, (value, oldValue, onCleanup) => {
   if (value) {
-    console.log(value)
     // nav to search
   }
 })

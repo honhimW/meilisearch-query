@@ -18,14 +18,14 @@ import {
   IndexSwitcher,
   DocumentList,
   Screen,
-} from '.'
+} from './'
 
 interface MailProps {
   defaultLayout?: number[]
   defaultCollapsed?: boolean
 }
 
-interface IndexHolder {
+export interface IndexHolder {
   uid: string
   primaryKey: string | undefined
   count: string
@@ -39,7 +39,6 @@ const props = withDefaults(defineProps<MailProps>(), {
 
 onMounted(() => {
   refreshIndexes()
-  console.log(indexes)
 })
 
 const refreshIndexes = () => {
@@ -276,7 +275,7 @@ const rotate = (event: any) => {
         <!--          <Separator />-->
         <div class="p-2">
           <div class="relative flex">
-            <MultiSearchPopover2 q="" @performSearch="search" />
+            <MultiSearchPopover2 @performSearch="search" :indexes="indexes" />
           </div>
         </div>
         <Separator />

@@ -51,7 +51,6 @@ const columns: ColumnDef<IData>[] = [
       column: column as Column<IData>,
       title: 'Title',
       'onUpdate:sort': (val) => {
-        console.log(val)
       },
     }),
     cell: ({ row }) => h('div', {

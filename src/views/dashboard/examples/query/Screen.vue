@@ -26,20 +26,16 @@ const selectedRef = toRef(props.selected)
 const unselectedRef = toRef(props.unselected)
 
 const onMove = (e: any) => {
-  console.log('on move')
-  console.log(e)
 }
 const onStart = (e: any) => {
   dragging.value = true
 }
 const onEnd = (e: any) => {
   dragging.value = false
-  console.log(props)
   emits('updateFields', {
     selected: selectedRef.value,
     unselected: unselectedRef.value
   })
-  console.log(props)
 }
 
 const dragging = ref(false)

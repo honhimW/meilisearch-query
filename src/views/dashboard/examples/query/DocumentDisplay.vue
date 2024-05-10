@@ -39,7 +39,6 @@ onMounted(() => {
   window.addEventListener('themeChange', ev => {
     let theme = (ev as ThemeChangeEvent).theme
     monacoTheme.value = toMonacoTheme(theme)
-    console.log(monacoTheme)
   })
   monacoTheme.value = toMonacoTheme(localStorage.getItem('themeMode') as string)
 })

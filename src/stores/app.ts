@@ -41,7 +41,6 @@ export const useAppStore = defineStore('app', {
   actions: {
     toggleDialog(show: boolean) {
       this.showDialog = !this.showDialog
-      console.log(this.showDialog)
     },
     toggleSidebar() {
       this.sidebarExpand = !this.sidebarExpand;
@@ -135,7 +134,6 @@ export const updateQueries = (key: string, updater: (oldValue: string | undefine
   const newQueries = {
     ...query,
   }
-  console.log(newQueries)
   newQueries[key] = newValue
   router.push({
     query: newQueries

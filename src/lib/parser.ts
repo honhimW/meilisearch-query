@@ -1,5 +1,5 @@
 import MsDslParser from '@/lib/MsDslParser'
-import { CharStreams, CommonTokenStream } from 'antlr4'
+import { CharStreams, CommonTokenStream, type TokenStream } from 'antlr4'
 import MsDslLexer from '@/lib/MsDslLexer'
 import MsDslErrorListener, { type MsDslError } from '@/lib/MsDslErrorListener'
 
@@ -8,6 +8,7 @@ export default function toAST(code: string): {
   lexer: MsDslLexer,
   lexerErrors: MsDslError[],
   parserErrors: MsDslError[],
+  tokenStream: TokenStream,
 } {
   let ips = CharStreams.fromString(code)
   let lexer = new MsDslLexer(ips)
@@ -24,5 +25,6 @@ export default function toAST(code: string): {
     lexer: lexer,
     lexerErrors: lexerErrorListener.getErrors(),
     parserErrors: parserErrorListener.getErrors(),
+    tokenStream: msDslParser.getTokenStream(),
   }
 }

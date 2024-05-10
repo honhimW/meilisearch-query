@@ -85,7 +85,6 @@ const activeIndex = ref<number>(-1)
 const handleFocus = (e: FocusEvent & { isFocused: boolean }) => {
   activeIndex.value = -1
   isFocused.value = e.isFocused
-  console.log(e)
 }
 
 const mappedCompletion = Object.entries(SEARCH_FILTER).flatMap(([key, value]) => {
