@@ -45,8 +45,8 @@ export const parse2SearchParam = (input: string, settings?: Settings): {
     q: input,
     attributesToHighlight: ['*'],
     facets: [],
-    highlightPreTag: '<ais-highlight style="background-color: #ff5895; font-weight: bold">',
-    highlightPostTag: '</ais-highlight>',
+    highlightPreTag: '<ais-hl-msq-t style="background-color: #ff5895; font-weight: bold">',
+    highlightPostTag: '</ais-hl-msq-t>',
     limit: 20,
     offset: 0,
     showRankingScore: true,
@@ -79,7 +79,7 @@ export const parse2SearchParam = (input: string, settings?: Settings): {
         let valueText = getValue(valueContext)
         if (keyText && symbolText && valueText) {
           if (!filterableAttributes.includes(keyText) && !filterableAttributes.includes('*')) {
-            let token = (keyContext as ParserRuleContext).start
+            let token = (keyContext as unknown as ParserRuleContext).start
             settingErrors.push({
               line: 1,
               startColumn: token.start + 1,
@@ -96,7 +96,7 @@ export const parse2SearchParam = (input: string, settings?: Settings): {
         let keyContext = sortContentContext.key()
         let keyText = getKey(keyContext)
         if (!sortableAttributes.includes(keyText) && !sortableAttributes.includes('*')) {
-          let token = (keyContext as ParserRuleContext).start
+          let token = (keyContext as unknown as ParserRuleContext).start
           settingErrors.push({
             line: 1,
             startColumn: token.start + 1,
@@ -111,21 +111,18 @@ export const parse2SearchParam = (input: string, settings?: Settings): {
         }
       } else if (cc.onContent()) {
         let onContentContext = cc.onContent()
-        let keysContext = onContentContext.keys()
-        let keyContexts = keysContext.key_list()
-        for (let keyContext of keyContexts) {
-          let key = getKey(keyContext)
-          if ('*' != key && !searchableAttributes.includes(key) && !searchableAttributes.includes('*')) {
-            let token = (keyContext as ParserRuleContext).start
-            settingErrors.push({
-              line: 1,
-              startColumn: token.start + 1,
-              endColumn: token.stop + 1,
-              message: `[${key}] is not a searchable attribute.`,
-            })
-          }
-          ons.push(key)
+        let keyContext = onContentContext.key()
+        let key = getKey(keyContext)
+        if ('*' != key && !searchableAttributes.includes(key) && !searchableAttributes.includes('*')) {
+          let token = (keyContext as unknown as ParserRuleContext).start
+          settingErrors.push({
+            line: 1,
+            startColumn: token.start + 1,
+            endColumn: token.stop + 1,
+            message: `[${key}] is not a searchable attribute.`,
+          })
         }
+        ons.push(key)
         searchParams.attributesToSearchOn = ons
       } else if (cc.queryContent()) {
         let queryContentContext = cc.queryContent()
@@ -136,7 +133,7 @@ export const parse2SearchParam = (input: string, settings?: Settings): {
       }
     }
   } catch (e) {
-
+    console.log(e)
   }
   return {
     sp: searchParams,

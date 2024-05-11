@@ -34,6 +34,15 @@ const onBlur = (e: FocusEvent) => {
 const onKeydown = (e: KeyboardEvent) => {
   emits('keydown', e);
 };
+
+const _inputDom = ref()
+
+defineExpose({
+  getInputDom(): HTMLElement {
+    return _inputDom.value
+  }
+})
+
 </script>
 
 <template class="relative">
@@ -43,6 +52,7 @@ const onKeydown = (e: KeyboardEvent) => {
         cn('flex h-10 w-full rounded-md border border-input bg-background px-3 py-2 text-sm ring-offset-background file:border-0 file:bg-transparent file:text-sm file:font-medium placeholder:text-muted-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:cursor-not-allowed disabled:opacity-50', props.class),
         prependIcon ? 'pl-12 left-placeholder' : ''
       ]"
+      ref="_inputDom"
       v-model="modelValue"
       :placeholder="placeholder"
       @focus="onFocus"

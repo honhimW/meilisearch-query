@@ -47,7 +47,7 @@ const onKeyDown = (e: KeyboardEvent) => {
       isFocused.value = false;
       if (!current.isActive) {
         router.push(`/dashboard/${current.path}`);
-        (document.getElementById('globalSearchInput')?.children[1] as HTMLInputElement).blur();
+        gsi.value?.getInputDom()?.blur();
       }
     }
   }
@@ -59,15 +59,17 @@ const handleClick = (path: string) => {
 };
 
 const handleGlobalSearchTrigger = (e: KeyboardEvent) => {
-  const input = document.getElementById('globalSearchInput')?.children[1] as HTMLInputElement;
-  if ((e.shiftKey && e.metaKey && e.key === 'g') || (e.shiftKey && e.ctrlKey && e.key === 'g')) {
+  const input = gsi.value?.getInputDom();
+  if (input && ((e.shiftKey && e.metaKey && e.key === 'g') || (e.ctrlKey && e.key === 'g'))) {
     e.preventDefault();
     input.focus();
   }
-  if (e.key === 'Escape') {
+  if (input && e.key === 'Escape') {
     input.blur();
   }
 };
+
+const gsi = ref<InstanceType<typeof Input>>()
 
 onMounted(() => {
   window.addEventListener('keydown', handleGlobalSearchTrigger);
@@ -82,9 +84,9 @@ onUnmounted(() => {
   <Popover :open="isFocused">
     <PopoverTrigger class="w-full">
       <Input
-        id="globalSearchInput"
+        ref="gsi"
         v-model="search"
-        placeholder="Search..."
+        placeholder="ctrl G"
         class="w-full global-search__input"
         @focus="handleFocus"
         @blur="handleFocus"

@@ -8,10 +8,11 @@ import { Tabs, TabsContent } from '@/components/ui/tabs'
 import { ResizableHandle, ResizablePanel, ResizablePanelGroup } from '@/components/ui/resizable'
 import type { MDocument } from '@/views/dashboard/examples/query/DocumentList.vue'
 import type { MultiSearchQuery, SearchParams } from 'meilisearch/src/types/types'
-import { type Hit, type MultiSearchResult, type Settings } from 'meilisearch'
+import { type Hit, MeiliSearchError, type MultiSearchResult, type Settings } from 'meilisearch'
 import { RotateCw } from 'lucide-vue-next'
 import { Button } from '@/components/ui/button'
 import { getQuery } from '@/stores/app'
+import { useToast } from '@/components/ui/toast'
 import {
   DocumentDisplay,
   MultiSearchPopover2,
@@ -19,6 +20,7 @@ import {
   DocumentList,
   Screen,
 } from './'
+import { MeiliSearchCommunicationError } from 'meilisearch/src/errors/meilisearch-communication-error'
 
 interface MailProps {
   defaultLayout?: number[]
@@ -81,12 +83,22 @@ const selectedDocumentData = computed(() => selectedDocument.value)
 const results = ref<Array<Hit>>([])
 const mergeResults = ref<Array<MDocument>>([])
 
+const estimatedTotalHits = ref<number>(0)
+const processingTimeMs = ref<number>(0)
+
+const latestQuery = ref<SearchParams | string>()
+const latestPage = ref<number>(0)
+
 const search = (query?: SearchParams | string, page = 0) => {
+  latestQuery.value = query
+  latestPage.value = page
   let offset = 20 * page
   let limit = 20 * (page + 1)
 
-  results.value.length = 0
-  mergeResults.value.length = 0
+  if (page == 0) {
+    results.value.length = 0
+    mergeResults.value.length = 0
+  }
   let index = getQuery('_index')
   if (index) {
     let _searchQuery: MultiSearchQuery
@@ -96,23 +108,40 @@ const search = (query?: SearchParams | string, page = 0) => {
         q: query,
         attributesToHighlight: ['*'],
         facets: [],
-        highlightPreTag: '<ais-highlight style="background-color: #ff5895; font-weight: bold">',
-        highlightPostTag: '</ais-highlight>',
+        highlightPreTag: '<ais-hl-msq-t style="background-color: #ff5895; font-weight: bold">',
+        highlightPostTag: '</ais-hl-msq-t>',
         limit: limit,
-        offset: offset
+        offset: offset,
       }
     } else {
       _searchQuery = {
+        ...query as SearchParams,
         indexUid: index as string,
-        ...query as SearchParams
+        limit: limit,
+        offset: offset,
       }
     }
     window.msClient?.multiSearch({
       queries: [_searchQuery]
     }).then(value => {
       let results = value.results
+      estimatedTotalHits.value = results[0].estimatedTotalHits ?? 0
+      processingTimeMs.value = results[0].processingTimeMs ?? 0
       renderList(results, mergeResults.value, page == 0)
       mDocumentList.value = mergeResults.value
+    }).catch(reason => {
+      let error = reason as MeiliSearchCommunicationError
+      console.log({ error })
+
+      useToast().toast({
+        class: cn(
+          'right-0 bottom-0 flex fixed md:max-w-[420px] md:right-4 md:bottom-4'
+        ),
+        variant: 'destructive',
+        title: `${error.code}`,
+        description: error.message,
+        duration: 4000,
+      })
     })
   }
 
@@ -153,7 +182,7 @@ const renderList = (results: Array<MultiSearchResult<Record<string, any>>>, merg
       for (let key in _doc) {
         let attribute: Attribute = {
           title: key,
-          label: '0',
+          label: '1',
           icon: '',
           variant: 'ghost'
         }
@@ -226,7 +255,7 @@ const rotate = (event: any) => {
     :class="cn(
         'h-full',
         'items-stretch',
-        'max-h-[800px]',
+        'max-h-[100%]',
       )"
   >
     <ResizablePanel
@@ -259,23 +288,9 @@ const rotate = (event: any) => {
     <ResizableHandle id="resize-handle-1" with-handle />
     <ResizablePanel id="resize-panel-2" :default-size="defaultLayout[1]" :min-size="30">
       <Tabs default-value="all">
-        <!--          <div class="flex items-center px-4 py-2">-->
-        <!--            <h1 class="text-xl font-bold">-->
-        <!--              Result-->
-        <!--            </h1>-->
-        <!--            <TabsList class="ml-auto">-->
-        <!--              <TabsTrigger value="all" class="text-zinc-600 dark:text-zinc-200">-->
-        <!--                Struct-->
-        <!--              </TabsTrigger>-->
-        <!--              <TabsTrigger value="unread" class="text-zinc-600 dark:text-zinc-200">-->
-        <!--                Plain-->
-        <!--              </TabsTrigger>-->
-        <!--            </TabsList>-->
-        <!--          </div>-->
-        <!--          <Separator />-->
         <div class="p-2">
           <div class="relative flex">
-            <MultiSearchPopover2 @performSearch="search" :indexes="indexes" />
+            <MultiSearchPopover2 @performSearch="payload => search(payload, 0)" :indexes="indexes" />
           </div>
         </div>
         <Separator />
@@ -283,12 +298,22 @@ const rotate = (event: any) => {
           <div class="flex items-start gap-4 text-sm">
             <div class="grid gap-1">
               <div class="font-semibold">
-                Hits: {{ 1000 }}
+                Hits:
+              </div>
+            </div>
+            <div class="grid gap-1">
+              <div class="font-semibold" style="color: #d10065">
+                {{ estimatedTotalHits > 10 ? '~' : '' }} {{ estimatedTotalHits.toLocaleString() }}
               </div>
             </div>
             <div class="grid gap-1">
               <div class="font-semibold">
-                Time spent: 2ms
+                Time spent:
+              </div>
+            </div>
+            <div class="grid gap-1">
+              <div class="font-semibold" style="color: #d10065">
+                {{ processingTimeMs }} ms
               </div>
             </div>
           </div>
@@ -298,6 +323,7 @@ const rotate = (event: any) => {
           <DocumentList v-model:selected-document="selectedDocument"
                         :documents="mDocumentList"
                         @click-document="spreadDocument = true"
+                        @reach-bottom="() => {search(latestQuery, latestPage + 1)}"
           />
         </TabsContent>
       </Tabs>

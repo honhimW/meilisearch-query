@@ -39,7 +39,7 @@ export const allSuggestions = (model: monaco.editor.ITextModel, position: monaco
     let s = lineContent.substring(lastColumn, positionColumn)
     let trimStart = s.trimStart()
 
-    
+    console.log(preToken)
 
 
     let i = tokenIndex
@@ -69,7 +69,6 @@ export const allSuggestions = (model: monaco.editor.ITextModel, position: monaco
           )
           break
       }
-      console.log(prev)
       i--
     }
   }

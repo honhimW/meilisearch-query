@@ -89,7 +89,7 @@ const checkUrl = () => {
           <Label for="apiKey" class="text-right">
             API KEY
           </Label>
-          <Input id="apiKey" v-model="apiKey" class="col-span-3" @keydown.enter.prevent="saveAndClose" />
+          <Input v-model="apiKey" class="col-span-3" @keydown.enter.prevent="saveAndClose" />
         </div>
       </div>
       <DialogFooter class="flex flex-row justify-between items-center gap-4">

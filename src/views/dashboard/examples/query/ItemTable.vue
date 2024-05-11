@@ -47,7 +47,7 @@ const InnerHTMLComponent = defineComponent({
 })
 
 const resolveMedia = (raw: any) => {
-  if (typeof raw == 'string' && raw.indexOf('</ais-highlight>') != -1) {
+  if (typeof raw == 'string' && raw.indexOf('</aishl-msq-t>') != -1) {
     return h(InnerHTMLComponent, { class: ' font-medium source', style: 'word-break: break-word;', html: raw })
   }
 

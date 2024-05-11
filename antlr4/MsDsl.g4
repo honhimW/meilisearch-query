@@ -60,15 +60,11 @@ queryContent
     ;
 
 onContent
-    : AT_ON ':' keys
+    : AT_ON ':' key
     ;
 
 AT_ON
     : '@on'
-    ;
-
-keys
-    : '[' key (',' key)* ']'
     ;
 
 // primary
