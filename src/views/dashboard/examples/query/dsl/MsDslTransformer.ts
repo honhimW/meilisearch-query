@@ -42,7 +42,7 @@ export const parse2SearchParam = (input: string, settings?: Settings): {
   let sorts: string[] = []
   let ons: string[] = []
   let searchParams: SearchParams = {
-    q: input,
+    q: '',
     attributesToHighlight: ['*'],
     facets: [],
     highlightPreTag: '<ais-hl-msq-t style="background-color: #ff5895; font-weight: bold">',
@@ -133,7 +133,6 @@ export const parse2SearchParam = (input: string, settings?: Settings): {
       }
     }
   } catch (e) {
-    console.log(e)
   }
   return {
     sp: searchParams,

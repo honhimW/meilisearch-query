@@ -1,7 +1,7 @@
 <script lang="ts" setup>
 import { ScrollArea } from '@/components/ui/scroll-area'
 import { cn } from '@/lib/utils'
-import { ref } from 'vue'
+import { onMounted, ref } from 'vue'
 import ListItem from '@/views/dashboard/examples/query/ListItem.vue'
 import type { Attribute, ScreenProps } from '@/views/dashboard/examples/query/Screen.vue'
 
@@ -38,7 +38,7 @@ const onSelectedDocument = (item: MDocument) => {
 </script>
 
 <template>
-    <ScrollArea class="h-screen flex max-h-[600px]" @reach-bottom="emits('reach-bottom')">
+    <ScrollArea style="height: 75vh" class=" flex" @reach-bottom="emits('reach-bottom')">
       <div class="flex-1 flex flex-col gap-2 p-4 pt-0">
         <TransitionGroup name="list" appear>
           <div

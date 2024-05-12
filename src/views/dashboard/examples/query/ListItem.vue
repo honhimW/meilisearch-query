@@ -53,6 +53,7 @@ const flattenObject = (obj: any, parentKey = '', result = {} as Record<string, a
   <div class="flex max-h-[200px] items-center source dscTruncateByHeight">
     <template v-for="(value, index) of flatted" :key="index">
       <Badge
+        v-show="flatted.size > 1"
         variant="secondary"
         class="mr-2"
         style="font-size: 0.85rem; font-weight: bold;"

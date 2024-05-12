@@ -3,13 +3,12 @@ import type { SearchParams } from 'meilisearch/src/types/types'
 import MonacoEditor from '@/views/dashboard/examples/query/MonacoEditor.vue'
 import * as monaco from 'monaco-editor'
 import { type CancellationToken, editor } from 'monaco-editor'
-import { onMounted, ref, watch } from 'vue'
+import { computed, onMounted, ref, watch, watchEffect } from 'vue'
 import { getQuery, ThemeChangeEvent, updateQueries } from '@/stores/app'
 import { useMagicKeys } from '@vueuse/core'
 import { allSuggestions } from '@/views/dashboard/examples/query/dsl/suggestions'
 import { parse2SearchParam } from '@/views/dashboard/examples/query/dsl/MsDslTransformer'
 import type { MsDslError } from '@/lib/MsDslErrorListener'
-import ITextModel = editor.ITextModel
 import { MsDslTokenProvider } from '@/views/dashboard/examples/query/dsl/MsDslTokenProvider'
 import type { IndexHolder } from '@/views/dashboard/examples/query/DocumentDashboard.vue'
 import type { Settings } from 'meilisearch'
@@ -45,8 +44,8 @@ watch(ctrlK, (value, oldValue, onCleanup) => {
 
 const getSetting = (): Settings | undefined => {
   let settings = undefined
+  let index = getQuery('_index')
   if (props) {
-    let index = getQuery('_index');
     let find = (props.indexes as IndexHolder[]).find(value => value.uid === index)
     settings = find?.settings
   }
@@ -81,6 +80,8 @@ const customizeEditor = (editor: monaco.editor.IStandaloneCodeEditor) => {
   })
   editor.addCommand(monaco.KeyMod.Shift | monaco.KeyCode.Enter, args => {
   })
+  editor.addCommand(monaco.KeyMod.CtrlCmd | monaco.KeyCode.Enter, args => {
+  })
   editor.addCommand(monaco.KeyMod.CtrlCmd | monaco.KeyMod.Shift | monaco.KeyCode.Enter, args => {
   })
   editor.addCommand(monaco.KeyMod.Alt | monaco.KeyMod.Shift | monaco.KeyCode.DownArrow, args => {
@@ -89,42 +90,46 @@ const customizeEditor = (editor: monaco.editor.IStandaloneCodeEditor) => {
   })
 
   editor.onDidChangeModelContent(e => {
-    let { sp, le, pe, settingErrors } = parse2SearchParam(searchStr.value, getSetting())
-
-    let errors: MsDslError[] = []
-    if (le.length > 0) {
-      le.forEach((error) => errors.push(error))
-    }
-    if (pe.length > 0) {
-      pe.forEach((error) => errors.push(error))
-    }
-    let markers: editor.IMarkerData[] = []
-    if (errors.length > 0) {
-      errors.forEach(e => {
-        markers.push({
-          message: e.message,
-          startColumn: e.startColumn,
-          endColumn: e.endColumn,
-          startLineNumber: e.line,
-          endLineNumber: e.line,
-          severity: monaco.MarkerSeverity.Error
-        })
-      })
-    }
-    if (settingErrors.length > 0) {
-      settingErrors.forEach(e => {
-        markers.push({
-          message: e.message,
-          startColumn: e.startColumn,
-          endColumn: e.endColumn,
-          startLineNumber: e.line,
-          endLineNumber: e.line,
-          severity: monaco.MarkerSeverity.Warning
-        })
-      })
-    }
-    monaco.editor.setModelMarkers(editor.getModel() as ITextModel, 'msDSL', markers)
+    updateMarker()
   })
+}
+
+const updateMarker = () => {
+  let { sp, le, pe, settingErrors } = parse2SearchParam(searchStr.value, getSetting())
+
+  let errors: MsDslError[] = []
+  if (le.length > 0) {
+    le.forEach((error) => errors.push(error))
+  }
+  if (pe.length > 0) {
+    pe.forEach((error) => errors.push(error))
+  }
+  let markers: editor.IMarkerData[] = []
+  if (errors.length > 0) {
+    errors.forEach(e => {
+      markers.push({
+        message: e.message,
+        startColumn: e.startColumn,
+        endColumn: e.endColumn,
+        startLineNumber: e.line,
+        endLineNumber: e.line,
+        severity: monaco.MarkerSeverity.Error
+      })
+    })
+  }
+  if (settingErrors.length > 0) {
+    settingErrors.forEach(e => {
+      markers.push({
+        message: e.message,
+        startColumn: e.startColumn,
+        endColumn: e.endColumn,
+        startLineNumber: e.line,
+        endLineNumber: e.line,
+        severity: monaco.MarkerSeverity.Warning
+      })
+    })
+  }
+  monaco.editor.setModelMarkers(editorRef.value?.getModel() as editor.ITextModel, 'msDSL', markers)
 }
 
 const updateSearchStr = (str: string) => {
@@ -200,7 +205,7 @@ const configDSL = () => {
       })
 
       return {
-        suggestions: allSuggestions(model, position),
+        suggestions: allSuggestions(model, position, getSetting()),
       }
       // if (contentBeforeCursor == '') {
       // }
@@ -229,7 +234,7 @@ const toMonacoTheme = (themeMode: string) => {
   return themeMode === 'dark' ? 'shacdn-ui-dark' : 'shacdn-ui-light'
 }
 
-const monacoTheme = ref(toMonacoTheme(localStorage.getItem('themeMode') as string))
+const monacoTheme = ref<string>(toMonacoTheme(localStorage.getItem('themeMode') as string))
 </script>
 
 <template>

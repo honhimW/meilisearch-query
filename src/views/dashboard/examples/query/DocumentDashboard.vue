@@ -9,18 +9,19 @@ import { ResizableHandle, ResizablePanel, ResizablePanelGroup } from '@/componen
 import type { MDocument } from '@/views/dashboard/examples/query/DocumentList.vue'
 import type { MultiSearchQuery, SearchParams } from 'meilisearch/src/types/types'
 import { type Hit, MeiliSearchError, type MultiSearchResult, type Settings } from 'meilisearch'
-import { RotateCw } from 'lucide-vue-next'
+import { RotateCw, ArrowLeftToLine } from 'lucide-vue-next'
 import { Button } from '@/components/ui/button'
 import { getQuery } from '@/stores/app'
 import { useToast } from '@/components/ui/toast'
 import {
   DocumentDisplay,
-  MultiSearchPopover2,
+  MultiSearchPopover,
   IndexSwitcher,
   DocumentList,
   Screen,
 } from './'
 import { MeiliSearchCommunicationError } from 'meilisearch/src/errors/meilisearch-communication-error'
+import Icon from '@/components/ui/Icon.vue'
 
 interface MailProps {
   defaultLayout?: number[]
@@ -69,6 +70,7 @@ const indexes = ref<IndexHolder[]>([])
 const isCollapsed = ref(props.defaultCollapsed)
 
 const spreadDocument = ref(false)
+const spreadScreen = ref(true)
 const selectedIndex = ref<string | undefined>(indexes?.value[0]?.uid)
 
 const searchValue = ref('')
@@ -260,8 +262,8 @@ const rotate = (event: any) => {
   >
     <ResizablePanel
       id="resize-panel-1"
+      v-show="spreadScreen"
       :default-size="defaultLayout[0]"
-      collapsible
       :min-size="15"
       :max-size="30"
       :class="cn(isCollapsed && 'min-w-[50px] transition-all duration-300 ease-in-out')"
@@ -275,7 +277,6 @@ const rotate = (event: any) => {
           @update:index="payload => {selectedIndex = payload}" />
         <Button variant="ghost" size="icon" @click="rotate">
           <RotateCw class="size-4" />
-          <span class="sr-only">PanelRightClose</span>
         </Button>
       </div>
       <Separator />
@@ -290,7 +291,11 @@ const rotate = (event: any) => {
       <Tabs default-value="all">
         <div class="p-2">
           <div class="relative flex">
-            <MultiSearchPopover2 @performSearch="payload => search(payload, 0)" :indexes="indexes" />
+            <Button variant="outline" class="border-0 p-[6px] w-8 h-8" @click="spreadScreen = !spreadScreen">
+              <ArrowLeftToLine class="transition-all duration-500"
+                               :class="!spreadScreen && 'rotate-180 text-black'" />
+            </Button>
+            <MultiSearchPopover @performSearch="payload => search(payload, 0)" :indexes="indexes" />
           </div>
         </div>
         <Separator />

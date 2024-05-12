@@ -35,7 +35,7 @@ export const editorProps = {
     default: 'javascript',
   },
   theme: {
-    type: String as PropType<Theme>,
+    type: String as PropType<string>,
     validator(value: string): boolean {
       return ['vs', 'hc-black', 'vs-dark', 'shacdn-ui-light', 'shacdn-ui-dark'].includes(value)
     },
